@@ -1,6 +1,8 @@
 create database studybuddy;
 use studybuddy;
 
+#Table Creation
+
 create table users (
 	id bigint auto_increment primary key,
     first_name varchar(50) not null,
