@@ -1,0 +1,11 @@
+POST http://localhost:8080/api/ai/session-plan
+Content-Type: application/json
+
+{
+  "course": "",
+  "topic": "",
+  "goal": "",
+  "studyStyle": "Problem solving",
+  "groupSize": 0,
+  "duration": 0
+}
