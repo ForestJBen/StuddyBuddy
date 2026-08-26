@@ -27,7 +27,9 @@ jobs:
         java-version: '17'
         distribution: 'temurin'
         cache: maven
+        cache-dependency-path: Application/studybuddy/studybuddy/pom.xml
     - name: Build with Maven
+      working-directory: Application/studybuddy/studybuddy
       run: mvn -B clean verify --file pom.xml
 
     
