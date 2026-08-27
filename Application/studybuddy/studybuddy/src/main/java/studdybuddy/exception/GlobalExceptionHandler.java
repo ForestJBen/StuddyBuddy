@@ -30,4 +30,15 @@ public class GlobalExceptionHandler {
 
         return errors;
     }
+
+    @ExceptionHandler(RuntimeException.class)
+    @ResponseStatus(HttpStatus.SERVICE_UNAVAILABLE)
+    public Map<String, String> handleRuntimeException(
+            RuntimeException exception) {
+
+        return Map.of(
+                "error",
+                exception.getMessage()
+        );
+    }
 }

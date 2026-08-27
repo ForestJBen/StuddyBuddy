@@ -1,17 +1,18 @@
 package studdybuddy.service;
 
+import org.springframework.stereotype.Service;
 import tools.jackson.databind.JsonNode;
 import tools.jackson.databind.json.JsonMapper;
-import org.springframework.stereotype.Service;
+
+import studdybuddy.dto.SessionPlanRequest;
+import studdybuddy.dto.SessionPlanResponse;
+import studdybuddy.dto.SessionSummaryRequest;
+import studdybuddy.dto.SessionSummaryResponse;
 
 import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
-import studdybuddy.dto.SessionPlanRequest;
-import studdybuddy.dto.SessionPlanResponse;
-import studdybuddy.dto.SessionSummaryRequest;
-import studdybuddy.dto.SessionSummaryResponse;
 
 @Service
 public class AiService {
@@ -22,11 +23,12 @@ public class AiService {
     public String translateToEnglish(String text) {
 
         try {
-
             String apiKey = System.getenv("OPENAI_API_KEY");
 
             if (apiKey == null || apiKey.isBlank()) {
-                return "API key not found";
+                throw new RuntimeException(
+                        "AI service is currently unavailable"
+                );
             }
 
             String requestBody = """
@@ -37,10 +39,22 @@ public class AiService {
                     """.formatted(escapeJson(text));
 
             HttpRequest request = HttpRequest.newBuilder()
-                    .uri(URI.create("https://api.openai.com/v1/responses"))
-                    .header("Authorization", "Bearer " + apiKey)
-                    .header("Content-Type", "application/json")
-                    .POST(HttpRequest.BodyPublishers.ofString(requestBody))
+                    .uri(URI.create(
+                            "https://api.openai.com/v1/responses"
+                    ))
+                    .header(
+                            "Authorization",
+                            "Bearer " + apiKey
+                    )
+                    .header(
+                            "Content-Type",
+                            "application/json"
+                    )
+                    .POST(
+                            HttpRequest.BodyPublishers.ofString(
+                                    requestBody
+                            )
+                    )
                     .build();
 
             HttpResponse<String> response =
@@ -50,15 +64,20 @@ public class AiService {
                     );
 
             System.out.println(
-                    "OpenAI status code: " + response.statusCode()
+                    "OpenAI status code: "
+                            + response.statusCode()
             );
 
             if (response.statusCode() != 200) {
-                return "OpenAI API error: " + response.body();
+                throw new RuntimeException(
+                        "AI service is currently unavailable"
+                );
             }
 
             JsonNode root =
-                     jsonMapper.readTree(response.body());
+                    jsonMapper.readTree(
+                            response.body()
+                    );
 
             JsonNode output =
                     root.path("output");
@@ -73,62 +92,71 @@ public class AiService {
                     if ("output_text".equals(
                             part.path("type").asText())) {
 
-                        return part.path("text").asText();
+                        return part
+                                .path("text")
+                                .asText();
                     }
                 }
             }
 
-            return "No translation returned";
+            throw new RuntimeException(
+                    "AI service is currently unavailable"
+            );
 
         } catch (Exception e) {
 
-            return "Translation failed: "
-                    + e.getMessage();
+            throw new RuntimeException(
+                    "AI service is currently unavailable"
+            );
         }
     }
 
-    public SessionPlanResponse generateSessionPlan(SessionPlanRequest request) {
+    public SessionPlanResponse generateSessionPlan(
+            SessionPlanRequest request) {
 
         try {
-            String apiKey = System.getenv("OPENAI_API_KEY");
+            String apiKey =
+                    System.getenv("OPENAI_API_KEY");
 
             if (apiKey == null || apiKey.isBlank()) {
-                return null;
+                throw new RuntimeException(
+                        "AI service is currently unavailable"
+                );
             }
 
             String prompt = """
-                You are an AI study session facilitator.
+                    You are an AI study session facilitator.
 
-                Create a study session plan using the following information:
+                    Create a study session plan using the following information:
 
-                Course: %s
-                Topic: %s
-                Goal: %s
-                Study style: %s
-                Group size: %d
-                Duration: %d minutes
+                    Course: %s
+                    Topic: %s
+                    Goal: %s
+                    Study style: %s
+                    Group size: %d
+                    Duration: %d minutes
 
-                Return exactly in this format:
+                    Return exactly in this format:
 
-                ICEBREAKER:
-                one icebreaker question
+                    ICEBREAKER:
+                    one icebreaker question
 
-                DISCUSSION:
-                question 1
-                question 2
-                question 3
+                    DISCUSSION:
+                    question 1
+                    question 2
+                    question 3
 
-                AGENDA:
-                item 1
-                item 2
-                item 3
-                item 4
+                    AGENDA:
+                    item 1
+                    item 2
+                    item 3
+                    item 4
 
-                CHECKLIST:
-                item 1
-                item 2
-                item 3
-                """
+                    CHECKLIST:
+                    item 1
+                    item 2
+                    item 3
+                    """
                     .formatted(
                             request.getCourse(),
                             request.getTopic(),
@@ -139,18 +167,35 @@ public class AiService {
                     );
 
             String requestBody = """
-                {
-                  "model": "gpt-5.4-mini",
-                  "input": "%s"
-                }
-                """.formatted(escapeJson(prompt));
+                    {
+                      "model": "gpt-5.4-mini",
+                      "input": "%s"
+                    }
+                    """.formatted(
+                    escapeJson(prompt)
+            );
 
-            HttpRequest httpRequest = HttpRequest.newBuilder()
-                    .uri(URI.create("https://api.openai.com/v1/responses"))
-                    .header("Authorization", "Bearer " + apiKey)
-                    .header("Content-Type", "application/json")
-                    .POST(HttpRequest.BodyPublishers.ofString(requestBody))
-                    .build();
+            HttpRequest httpRequest =
+                    HttpRequest.newBuilder()
+                            .uri(
+                                    URI.create(
+                                            "https://api.openai.com/v1/responses"
+                                    )
+                            )
+                            .header(
+                                    "Authorization",
+                                    "Bearer " + apiKey
+                            )
+                            .header(
+                                    "Content-Type",
+                                    "application/json"
+                            )
+                            .POST(
+                                    HttpRequest.BodyPublishers.ofString(
+                                            requestBody
+                                    )
+                            )
+                            .build();
 
             HttpResponse<String> response =
                     httpClient.send(
@@ -159,79 +204,122 @@ public class AiService {
                     );
 
             if (response.statusCode() != 200) {
-                System.out.println(response.body());
-                return null;
+
+                System.out.println(
+                        response.body()
+                );
+
+                throw new RuntimeException(
+                        "AI service is currently unavailable"
+                );
             }
 
-            JsonNode root = jsonMapper.readTree(response.body());
+            JsonNode root =
+                    jsonMapper.readTree(
+                            response.body()
+                    );
 
             String aiText = null;
 
-            for (JsonNode item : root.path("output")) {
+            for (JsonNode item :
+                    root.path("output")) {
 
-                for (JsonNode part : item.path("content")) {
+                for (JsonNode part :
+                        item.path("content")) {
 
-                    if ("output_text".equals(part.path("type").asText())) {
-                        aiText = part.path("text").asText();
+                    if ("output_text".equals(
+                            part.path("type").asText())) {
+
+                        aiText =
+                                part.path("text").asText();
+
                         break;
                     }
                 }
             }
 
             if (aiText == null) {
-                return null;
+                throw new RuntimeException(
+                        "AI service is currently unavailable"
+                );
             }
 
             System.out.println(aiText);
 
-            SessionPlanResponse result = new SessionPlanResponse();
+            SessionPlanResponse result =
+                    new SessionPlanResponse();
 
-            // 1. ICEBREAKER
-            String[] icebreakerSplit = aiText.split("DISCUSSION:");
+            String[] icebreakerSplit =
+                    aiText.split("DISCUSSION:");
 
-            String icebreakerPart = icebreakerSplit[0]
-                    .replace("ICEBREAKER:", "")
-                    .trim();
+            String icebreakerPart =
+                    icebreakerSplit[0]
+                            .replace(
+                                    "ICEBREAKER:",
+                                    ""
+                            )
+                            .trim();
 
-            // 2. DISCUSSION
             String[] discussionSplit =
-                    icebreakerSplit[1].split("AGENDA:");
+                    icebreakerSplit[1]
+                            .split("AGENDA:");
 
             String discussionPart =
-                    discussionSplit[0].trim();
+                    discussionSplit[0]
+                            .trim();
 
-            // 3. AGENDA
             String[] agendaSplit =
-                    discussionSplit[1].split("CHECKLIST:");
+                    discussionSplit[1]
+                            .split("CHECKLIST:");
 
             String agendaPart =
-                    agendaSplit[0].trim();
+                    agendaSplit[0]
+                            .trim();
 
-            // 4. CHECKLIST
             String checklistPart =
-                    agendaSplit[1].trim();
+                    agendaSplit[1]
+                            .trim();
 
-            // Put parsed values into response
-            result.setIcebreaker(icebreakerPart);
+            result.setIcebreaker(
+                    icebreakerPart
+            );
 
             result.setDiscussionPrompts(
-                    java.util.Arrays.stream(
-                                    discussionPart.split("\\R"))
-                            .filter(line -> !line.isBlank())
+                    java.util.Arrays
+                            .stream(
+                                    discussionPart
+                                            .split("\\R")
+                            )
+                            .filter(
+                                    line ->
+                                            !line.isBlank()
+                            )
                             .toList()
             );
 
             result.setAgenda(
-                    java.util.Arrays.stream(
-                                    agendaPart.split("\\R"))
-                            .filter(line -> !line.isBlank())
+                    java.util.Arrays
+                            .stream(
+                                    agendaPart
+                                            .split("\\R")
+                            )
+                            .filter(
+                                    line ->
+                                            !line.isBlank()
+                            )
                             .toList()
             );
 
             result.setChecklist(
-                    java.util.Arrays.stream(
-                                    checklistPart.split("\\R"))
-                            .filter(line -> !line.isBlank())
+                    java.util.Arrays
+                            .stream(
+                                    checklistPart
+                                            .split("\\R")
+                            )
+                            .filter(
+                                    line ->
+                                            !line.isBlank()
+                            )
                             .toList()
             );
 
@@ -244,7 +332,9 @@ public class AiService {
                             + e.getMessage()
             );
 
-            return null;
+            throw new RuntimeException(
+                    "AI service is currently unavailable"
+            );
         }
     }
 
@@ -252,35 +342,96 @@ public class AiService {
             SessionSummaryRequest request) {
 
         try {
+
             String apiKey = System.getenv("OPENAI_API_KEY");
 
             if (apiKey == null || apiKey.isBlank()) {
-                return null;
+                throw new RuntimeException(
+                        "AI service is currently unavailable"
+                );
             }
 
             String prompt = """
                 You are an AI study session facilitator.
 
-                Summarize the following study session notes:
+                The following information describes one study session.
 
+                Course:
                 %s
 
-                Return exactly in this format:
+                Topic:
+                %s
 
-                COMPLETED:
-                item 1
-                item 2
+                Original study goal:
+                %s
 
-                REMAINING:
-                item 1
+                Planned agenda:
+                %s
 
-                FOLLOW_UP:
-                item 1
+                Planned checklist:
+                %s
 
-                NEXT_GOAL:
-                one concise next-session goal
+                Notes describing what actually happened:
+                %s
+
+                The agenda and checklist describe what was planned.
+                The notes describe what actually happened.
+
+                Use the notes as the primary source of truth.
+
+                Compare the notes with the original plan and identify:
+                - what was completed
+                - important discussion points
+                - what was planned but not completed
+                - remaining problems or areas of confusion
+                - follow-up tasks
+                - one useful goal for the next study session
+
+                Rules:
+                - Only claim something was completed if the notes support it.
+                - Do not invent completed work.
+                - Do not invent follow-up tasks.
+                - Preserve people's names when assigning tasks.
+                - If nothing was planned but not completed, return an empty array.
+                - If no remaining problem was mentioned, return an empty array.
+                - If no follow-up task was mentioned, return an empty array.
+                - Keep the session overview concise.
+
+                Return ONLY valid JSON.
+                Do not use Markdown.
+                Do not use ```json.
+                Do not add any explanation before or after the JSON.
+
+                Use exactly this JSON structure:
+
+                {
+                  "sessionOverview": "short summary",
+                  "topicsCompleted": [
+                    "item"
+                  ],
+                  "keyDiscussionPoints": [
+                    "item"
+                  ],
+                  "plannedButNotCompleted": [
+                    "item"
+                  ],
+                  "remainingProblems": [
+                    "item"
+                  ],
+                  "followUpTasks": [
+                    "item"
+                  ],
+                  "nextSessionGoal": "one concise goal"
+                }
                 """
-                    .formatted(request.getNotes());
+                    .formatted(
+                            request.getCourse(),
+                            request.getTopic(),
+                            request.getGoal(),
+                            request.getAgenda(),
+                            request.getChecklist(),
+                            request.getNotes()
+                    );
 
             String requestBody = """
                 {
@@ -289,12 +440,26 @@ public class AiService {
                 }
                 """.formatted(escapeJson(prompt));
 
-            HttpRequest httpRequest = HttpRequest.newBuilder()
-                    .uri(URI.create("https://api.openai.com/v1/responses"))
-                    .header("Authorization", "Bearer " + apiKey)
-                    .header("Content-Type", "application/json")
-                    .POST(HttpRequest.BodyPublishers.ofString(requestBody))
-                    .build();
+            HttpRequest httpRequest =
+                    HttpRequest.newBuilder()
+                            .uri(
+                                    URI.create(
+                                            "https://api.openai.com/v1/responses"
+                                    )
+                            )
+                            .header(
+                                    "Authorization",
+                                    "Bearer " + apiKey
+                            )
+                            .header(
+                                    "Content-Type",
+                                    "application/json"
+                            )
+                            .POST(
+                                    HttpRequest.BodyPublishers
+                                            .ofString(requestBody)
+                            )
+                            .build();
 
             HttpResponse<String> response =
                     httpClient.send(
@@ -303,8 +468,12 @@ public class AiService {
                     );
 
             if (response.statusCode() != 200) {
+
                 System.out.println(response.body());
-                return null;
+
+                throw new RuntimeException(
+                        "AI service is currently unavailable"
+                );
             }
 
             JsonNode root =
@@ -319,66 +488,70 @@ public class AiService {
                     if ("output_text".equals(
                             part.path("type").asText())) {
 
-                        aiText = part.path("text").asText();
+                        aiText =
+                                part.path("text").asText();
+
                         break;
                     }
                 }
             }
 
-            if (aiText == null) {
-                return null;
+            if (aiText == null || aiText.isBlank()) {
+                throw new RuntimeException(
+                        "AI service is currently unavailable"
+                );
             }
 
+            System.out.println("AI summary JSON:");
             System.out.println(aiText);
+
+            JsonNode summaryJson =
+                    jsonMapper.readTree(aiText);
 
             SessionSummaryResponse result =
                     new SessionSummaryResponse();
 
-            String[] completedSplit =
-                    aiText.split("REMAINING:");
-
-            String completedPart =
-                    completedSplit[0]
-                            .replace("COMPLETED:", "")
-                            .trim();
-
-            String[] remainingSplit =
-                    completedSplit[1].split("FOLLOW_UP:");
-
-            String remainingPart =
-                    remainingSplit[0].trim();
-
-            String[] followUpSplit =
-                    remainingSplit[1].split("NEXT_GOAL:");
-
-            String followUpPart =
-                    followUpSplit[0].trim();
-
-            String nextGoalPart =
-                    followUpSplit[1].trim();
+            result.setSessionOverview(
+                    summaryJson
+                            .path("sessionOverview")
+                            .asText()
+            );
 
             result.setTopicsCompleted(
-                    java.util.Arrays.stream(
-                                    completedPart.split("\\R"))
-                            .filter(line -> !line.isBlank())
-                            .toList()
+                    jsonArrayToList(
+                            summaryJson.path("topicsCompleted")
+                    )
+            );
+
+            result.setKeyDiscussionPoints(
+                    jsonArrayToList(
+                            summaryJson.path("keyDiscussionPoints")
+                    )
+            );
+
+            result.setPlannedButNotCompleted(
+                    jsonArrayToList(
+                            summaryJson.path("plannedButNotCompleted")
+                    )
             );
 
             result.setRemainingProblems(
-                    java.util.Arrays.stream(
-                                    remainingPart.split("\\R"))
-                            .filter(line -> !line.isBlank())
-                            .toList()
+                    jsonArrayToList(
+                            summaryJson.path("remainingProblems")
+                    )
             );
 
             result.setFollowUpTasks(
-                    java.util.Arrays.stream(
-                                    followUpPart.split("\\R"))
-                            .filter(line -> !line.isBlank())
-                            .toList()
+                    jsonArrayToList(
+                            summaryJson.path("followUpTasks")
+                    )
             );
 
-            result.setNextSessionGoal(nextGoalPart);
+            result.setNextSessionGoal(
+                    summaryJson
+                            .path("nextSessionGoal")
+                            .asText()
+            );
 
             return result;
 
@@ -389,8 +562,23 @@ public class AiService {
                             + e.getMessage()
             );
 
-            return null;
+            throw new RuntimeException(
+                    "AI service is currently unavailable"
+            );
         }
+    }
+
+    private java.util.List<String> jsonArrayToList(
+            JsonNode arrayNode) {
+
+        java.util.List<String> result =
+                new java.util.ArrayList<>();
+
+        for (JsonNode item : arrayNode) {
+            result.add(item.asText());
+        }
+
+        return result;
     }
 
     private String escapeJson(String text) {
