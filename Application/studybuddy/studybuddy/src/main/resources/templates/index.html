@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="StudyBuddy helps students find compatible study partners, form groups and organise focused study sessions.">
+    <title>StudyBuddy | Study Better Together</title>
+    <link rel="stylesheet" th:href="@{/css/main.css}" href="/css/main.css">
+</head>
+<body>
+<div th:replace="~{fragments/header :: header}"></div>
+<main>
+    <section class="hero-shell" aria-labelledby="hero-heading">
+        <div class="hero container">
+            <div class="hero-copy">
+                <p class="eyebrow">Study better together</p>
+                <h1 id="hero-heading">Find the right people to study with.</h1>
+                <p class="hero-description">
+                    Connect with students who share your courses, availability, learning goals and preferred study style. Build a group and turn every meeting into a focused study session.
+                </p>
+                <div class="hero-actions">
+                    <a class="button" th:href="@{/register}" href="/register">Create an account</a>
+                    <a class="button button-secondary" th:href="@{/matches}" href="/matches">Explore matches</a>
+                </div>
+                <p class="hero-note">Explainable recommendations based on non-sensitive profile data</p>
+            </div>
+            <div class="hero-visual" aria-label="Example study partner recommendation">
+                <article class="match-card">
+                    <div class="match-card-header">
+                        <div>
+                            <p class="eyebrow">Recommended study buddy</p>
+                            <h2>Alex</h2>
+                            <p class="match-card-subtitle">Bachelor of Information Sciences</p>
+                        </div>
+                        <span class="match-score">87% match</span>
+                    </div>
+                    <div class="match-details">
+                        <div class="match-detail"><span>Course</span><strong>COMP101</strong></div>
+                        <div class="match-detail"><span>Availability</span><strong>Saturday PM</strong></div>
+                    </div>
+                    <div class="match-reasons">
+                        <h3>Why this match?</h3>
+                        <ul>
+                            <li>Shared COMP101 course</li>
+                            <li>Two-hour availability overlap</li>
+                            <li>Similar exam preparation goal</li>
+                        </ul>
+                    </div>
+                </article>
+                <div class="floating-note">Ready to connect and plan a session</div>
+            </div>
+        </div>
+    </section>
+
+    <section class="section section-white" aria-labelledby="features-heading">
+        <div class="container">
+            <div class="section-heading section-heading-centered">
+                <p class="eyebrow">Core features</p>
+                <h2 id="features-heading">Everything needed to move from matching to studying</h2>
+                <p>StudyBuddy keeps partner discovery, group organisation and session planning in one clear workflow.</p>
+            </div>
+            <div class="feature-grid">
+                <article class="feature-card">
+                    <span class="feature-icon" aria-hidden="true">01</span>
+                    <h3>Smart matching</h3>
+                    <p>Compare courses, schedules, goals and study preferences. Every score includes clear reasons so students can make an informed choice.</p>
+                    <a class="text-link" th:href="@{/matches}" href="/matches">Find a study buddy <span aria-hidden="true">&rarr;</span></a>
+                </article>
+                <article class="feature-card">
+                    <span class="feature-icon" aria-hidden="true">02</span>
+                    <h3>Study groups</h3>
+                    <p>Invite accepted partners, create a small group and keep member, course and session information organised in one place.</p>
+                    <a class="text-link" th:href="@{/groups}" href="/groups">View study groups <span aria-hidden="true">&rarr;</span></a>
+                </article>
+                <article class="feature-card">
+                    <span class="feature-icon" aria-hidden="true">AI</span>
+                    <h3>AI-assisted sessions</h3>
+                    <p>Generate a draft agenda, discussion prompts and a checklist. Students review and edit the plan before anything is saved.</p>
+                    <a class="text-link" th:href="@{/sessions}" href="/sessions">Plan a study session <span aria-hidden="true">&rarr;</span></a>
+                </article>
+            </div>
+        </div>
+    </section>
+
+    <section class="section" aria-labelledby="steps-heading">
+        <div class="container">
+            <div class="section-heading">
+                <p class="eyebrow">How it works</p>
+                <h2 id="steps-heading">A simple path to a productive study session</h2>
+            </div>
+            <div class="steps">
+                <article class="step"><h3>Build your profile</h3><p>Add courses, availability, learning goals and study preferences.</p></article>
+                <article class="step"><h3>Choose a compatible partner</h3><p>Review ranked recommendations and the reasons behind each match.</p></article>
+                <article class="step"><h3>Plan and study together</h3><p>Create a group, schedule a session and use an editable AI-generated agenda.</p></article>
+            </div>
+        </div>
+    </section>
+
+    <section class="section section-white" aria-labelledby="ai-heading">
+        <div class="container">
+            <div class="ai-panel">
+                <div class="ai-copy">
+                    <p class="eyebrow">AI Study Session Facilitator</p>
+                    <h2 id="ai-heading">Start each meeting with a clear plan.</h2>
+                    <p>Enter a course, topic, goal, duration and group size. StudyBuddy creates a structured draft that the group can review, edit and save.</p>
+                    <a class="button" th:href="@{/sessions}" href="/sessions">Plan a session</a>
+                </div>
+                <div class="ai-example" aria-label="Example AI-generated session agenda">
+                    <div class="ai-example-header"><h3>COMP101 exam revision</h3><span class="ai-badge">AI draft</span></div>
+                    <ol class="agenda-list">
+                        <li><time>10 min</time><span>Review key object-oriented concepts</span></li>
+                        <li><time>25 min</time><span>Solve two practice questions</span></li>
+                        <li><time>15 min</time><span>Compare answers and explain reasoning</span></li>
+                        <li><time>10 min</time><span>Record open questions and next steps</span></li>
+                    </ol>
+                </div>
+            </div>
+        </div>
+    </section>
+</main>
+<div th:replace="~{fragments/footer :: footer}"></div>
+<script th:src="@{/js/main.js}" src="/js/main.js"></script>
+</body>
+</html>

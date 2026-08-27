@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<body>
+<header class="site-header" th:fragment="header">
+    <nav class="navigation container" aria-label="Primary navigation">
+        <a class="brand" th:href="@{/}" href="/">
+            <span class="brand-mark" aria-hidden="true">SB</span>
+            <span>StudyBuddy</span>
+        </a>
+        <button class="navigation-toggle" type="button" aria-controls="primary-navigation" aria-expanded="false" data-navigation-toggle>
+            Menu
+        </button>
+        <ul class="navigation-links" id="primary-navigation" data-navigation-links>
+            <li><a th:href="@{/}" href="/" aria-current="page">Home</a></li>
+            <li><a th:href="@{/matches}" href="/matches">Find Buddies</a></li>
+            <li><a th:href="@{/groups}" href="/groups">Groups</a></li>
+            <li><a th:href="@{/sessions}" href="/sessions">Sessions</a></li>
+            <li class="navigation-auth">
+                <a class="navigation-login" th:href="@{/login}" href="/login">Log in</a>
+                <a class="button" th:href="@{/register}" href="/register">Create account</a>
+            </li>
+        </ul>
+    </nav>
+</header>
+</body>
+</html>
