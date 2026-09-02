@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 <body>
 <header class="site-header" th:fragment="header">
     <nav class="navigation container" aria-label="Primary navigation">
@@ -16,9 +16,16 @@
             <li><a th:href="@{/groups}" href="/groups">Groups</a></li>
             <li><a th:href="@{/sessions}" href="/sessions">Sessions</a></li>
             <li><a th:href="@{/profile}" href="/profile">Profile</a></li>
-            <li class="navigation-auth">
+            <li class="navigation-auth" sec:authorize="isAnonymous()">
                 <a class="navigation-login" th:href="@{/login}" href="/login">Log in</a>
                 <a class="button" th:href="@{/register}" href="/register">Create account</a>
+            </li>
+            <li class="navigation-auth" sec:authorize="isAuthenticated()">
+                <form class="navigation-logout-form" th:action="@{/api/auth/logout}" method="post" data-navigation-logout>
+                    <input th:if="${_csrf != null}" type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}">
+                    <button class="navigation-logout" type="submit" data-navigation-logout-button>Log out</button>
+                </form>
+                <span class="navigation-logout-status" role="status" aria-live="polite" data-navigation-logout-status></span>
             </li>
         </ul>
     </nav>

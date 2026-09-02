@@ -14,6 +14,9 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.AuthenticationEntryPoint;
+import org.springframework.security.web.authentication.LoginUrlAuthenticationEntryPoint;
+import org.springframework.security.web.util.matcher.AnyRequestMatcher;
 import org.springframework.security.web.context.HttpSessionSecurityContextRepository;
 import org.springframework.security.web.context.SecurityContextRepository;
 import studdybuddy.user.UserRepository;
@@ -54,6 +57,13 @@ public class SecurityConfig {
             HttpSecurity http,
             SecurityContextRepository securityContextRepository
     ) throws Exception {
+        AuthenticationEntryPoint apiAuthenticationEntryPoint = (request, response, exception) -> {
+            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+            response.setContentType(MediaType.APPLICATION_JSON_VALUE);
+            response.getWriter().write(
+                    "{\"success\":false,\"message\":\"Authentication is required\"}"
+            );
+        };
         http
                 .securityContext(context -> context
                         .securityContextRepository(securityContextRepository))
@@ -65,13 +75,14 @@ public class SecurityConfig {
                         .requestMatchers(org.springframework.http.HttpMethod.GET, "/api/courses", "/api/courses/**").permitAll()
                         .anyRequest().authenticated())
                 .exceptionHandling(exceptions -> exceptions
-                        .authenticationEntryPoint((request, response, exception) -> {
-                            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-                            response.setContentType(MediaType.APPLICATION_JSON_VALUE);
-                            response.getWriter().write(
-                                    "{\"success\":false,\"message\":\"Authentication is required\"}"
-                            );
-                        }))
+                        .defaultAuthenticationEntryPointFor(
+                                apiAuthenticationEntryPoint,
+                                request -> request.getRequestURI().startsWith("/api/")
+                        )
+                        .defaultAuthenticationEntryPointFor(
+                                new LoginUrlAuthenticationEntryPoint("/login"),
+                                AnyRequestMatcher.INSTANCE
+                        ))
                 .formLogin(form -> form.disable())
                 .httpBasic(basic -> basic.disable());
 

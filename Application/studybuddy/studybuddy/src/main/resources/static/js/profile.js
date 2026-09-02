@@ -41,6 +41,7 @@ function createProfilePage(form) {
     const courseStatus = form.querySelector("[data-course-status]");
     const saveStatus = form.querySelector("[data-save-status]");
     const saveButton = form.querySelector("[data-save-button]");
+    const logoutButton = form.querySelector("[data-logout-button]");
     let availableCourses = [];
 
     function bindEvents() {
@@ -51,6 +52,7 @@ function createProfilePage(form) {
         });
         form.addEventListener("change", updateSummary);
         form.addEventListener("submit", submitProfile);
+        logoutButton.addEventListener("click", logout);
     }
 
     function setCourses(courses) {
@@ -226,6 +228,31 @@ function createProfilePage(form) {
     function setSaving(isSaving) {
         saveButton.disabled = isSaving;
         saveButton.textContent = isSaving ? "Saving..." : profileConfiguration.profileApiEnabled ? "Save profile" : "Save profile draft";
+    }
+
+    async function logout() {
+        logoutButton.disabled = true;
+        logoutButton.textContent = "Logging out...";
+        setSaveStatus("Logging you out...");
+
+        try {
+            const response = await fetch("/api/auth/logout", {
+                method: "POST",
+                credentials: "same-origin",
+                headers: buildJsonHeaders()
+            });
+
+            if (!response.ok) {
+                throw new Error("Logout failed");
+            }
+
+            window.localStorage.removeItem(profileConfiguration.localDraftKey);
+            window.location.assign("/");
+        } catch (error) {
+            logoutButton.disabled = false;
+            logoutButton.textContent = "Log out";
+            setSaveStatus("Unable to log out. Please try again.", "error");
+        }
     }
 
     return { bindEvents, populate, setCourses, setCourseStatus };

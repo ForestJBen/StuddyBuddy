@@ -8,6 +8,7 @@ import org.springframework.boot.webmvc.test.autoconfigure.AutoConfigureMockMvc;
 import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockHttpSession;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 import studdybuddy.user.User;
@@ -19,7 +20,9 @@ import static org.springframework.security.test.web.servlet.request.SecurityMock
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.view;
 
 @SpringBootTest
 @AutoConfigureMockMvc
@@ -143,6 +146,51 @@ class AuthControllerIntegrationTests {
                 .andExpect(status().isUnauthorized())
                 .andExpect(jsonPath("$.success").value(false))
                 .andExpect(jsonPath("$.message").value("Authentication is required"));
+    }
+
+    @Test
+    void loginAndRegisterPagesArePublicAndContainCsrfMetadata() throws Exception {
+        mockMvc.perform(get("/login"))
+                .andExpect(status().isOk())
+                .andExpect(view().name("login"))
+                .andExpect(content().string(org.hamcrest.Matchers.containsString("name=\"_csrf\"")))
+                .andExpect(content().string(org.hamcrest.Matchers.containsString("data-mode=\"login\"")))
+                .andExpect(content().string(org.hamcrest.Matchers.containsString("Create account")))
+                .andExpect(content().string(org.hamcrest.Matchers.containsString("href=\"/matches\"")))
+                .andExpect(content().string(org.hamcrest.Matchers.containsString("href=\"/groups\"")))
+                .andExpect(content().string(org.hamcrest.Matchers.containsString("href=\"/sessions\"")))
+                .andExpect(content().string(org.hamcrest.Matchers.containsString("href=\"/profile\"")));
+
+        mockMvc.perform(get("/register"))
+                .andExpect(status().isOk())
+                .andExpect(view().name("register"))
+                .andExpect(content().string(org.hamcrest.Matchers.containsString("name=\"_csrf\"")))
+                .andExpect(content().string(org.hamcrest.Matchers.containsString("data-mode=\"register\"")));
+    }
+
+    @Test
+    @WithMockUser
+    void profilePageContainsLogoutControl() throws Exception {
+        mockMvc.perform(get("/profile"))
+                .andExpect(status().isOk())
+                .andExpect(view().name("profile"))
+                .andExpect(content().string(org.hamcrest.Matchers.containsString("data-logout-button")))
+                .andExpect(content().string(org.hamcrest.Matchers.containsString("data-navigation-logout")))
+                .andExpect(content().string(org.hamcrest.Matchers.containsString("href=\"/matches\"")))
+                .andExpect(content().string(org.hamcrest.Matchers.containsString("href=\"/groups\"")))
+                .andExpect(content().string(org.hamcrest.Matchers.containsString("href=\"/sessions\"")))
+                .andExpect(content().string(org.hamcrest.Matchers.containsString("href=\"/profile\"")))
+                .andExpect(content().string(org.hamcrest.Matchers.not(
+                        org.hamcrest.Matchers.containsString("Create account"))));
+    }
+
+    @Test
+    void protectedPageRedirectsAnonymousUserToLogin() throws Exception {
+        mockMvc.perform(get("/profile"))
+                .andExpect(status().is3xxRedirection())
+                .andExpect(org.springframework.test.web.servlet.result.MockMvcResultMatchers.redirectedUrl(
+                        "/login"
+                ));
     }
 
     private void saveUser(String email, String password) {

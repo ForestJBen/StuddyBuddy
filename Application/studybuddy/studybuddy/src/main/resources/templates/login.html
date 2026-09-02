@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Log in to StudyBuddy to manage your profile and study connections.">
+    <meta name="_csrf" th:content="${_csrf.token}">
+    <meta name="_csrf_header" th:content="${_csrf.headerName}">
+    <title>Log in | StudyBuddy</title>
+    <link rel="stylesheet" th:href="@{/css/main.css}" href="/css/main.css">
+    <link rel="stylesheet" th:href="@{/css/auth.css}" href="/css/auth.css">
+</head>
+<body>
+<div th:replace="~{fragments/header :: header}"></div>
+<main class="auth-page">
+    <section class="auth-card" aria-labelledby="login-title">
+        <div class="auth-heading">
+            <p class="eyebrow">Welcome back</p>
+            <h1 id="login-title">Log in to StudyBuddy</h1>
+            <p>Continue building better study habits with your classmates.</p>
+        </div>
+
+        <div class="auth-alert" role="alert" aria-live="polite" data-form-status hidden></div>
+
+        <form class="auth-form" data-auth-form data-endpoint="/api/auth/login" data-mode="login" novalidate>
+            <div class="form-field">
+                <label for="email">Email address</label>
+                <input id="email" name="email" type="email" autocomplete="email" maxlength="255" required autofocus>
+                <span class="field-error" data-field-error="email"></span>
+            </div>
+
+            <div class="form-field">
+                <label for="password">Password</label>
+                <input id="password" name="password" type="password" autocomplete="current-password" required>
+                <span class="field-error" data-field-error="password"></span>
+            </div>
+
+            <button class="auth-submit" type="submit" data-submit-button>Log in</button>
+        </form>
+
+        <p class="auth-switch">New to StudyBuddy? <a th:href="@{/register}" href="/register">Create an account</a></p>
+    </section>
+</main>
+<div th:replace="~{fragments/footer :: footer}"></div>
+<script th:src="@{/js/main.js}" src="/js/main.js"></script>
+<script th:src="@{/js/auth.js}" src="/js/auth.js"></script>
+</body>
+</html>

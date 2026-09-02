@@ -198,6 +198,29 @@ button:focus-visible,
     padding: 0.6rem 0.4rem;
 }
 
+.navigation-logout-form {
+    margin: 0;
+}
+
+.navigation-logout {
+    min-height: 40px;
+    padding: 0.65rem 1rem;
+    border-color: var(--color-header-control-border);
+    background: transparent;
+    box-shadow: none;
+}
+
+.navigation-logout:hover,
+.navigation-logout:focus-visible {
+    border-color: var(--color-white);
+    background: rgba(255, 255, 255, 0.08);
+}
+
+.navigation-logout-status:not(:empty) {
+    color: var(--color-navigation-link);
+    font-size: 0.85rem;
+}
+
 .navigation .button {
     min-height: 40px;
     padding-inline: 1rem;
@@ -691,6 +714,12 @@ main {
     }
 
     .navigation .button {
+        width: 100%;
+        margin-top: 0.65rem;
+    }
+
+    .navigation-logout,
+    .navigation-logout-form {
         width: 100%;
         margin-top: 0.65rem;
     }
