@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Create a StudyBuddy student account.">
+    <meta name="_csrf" th:content="${_csrf.token}">
+    <meta name="_csrf_header" th:content="${_csrf.headerName}">
+    <title>Create account | StudyBuddy</title>
+    <link rel="stylesheet" th:href="@{/css/main.css}" href="/css/main.css">
+    <link rel="stylesheet" th:href="@{/css/auth.css}" href="/css/auth.css">
+</head>
+<body>
+<div th:replace="~{fragments/header :: header}"></div>
+<main class="auth-page">
+    <section class="auth-card auth-card-wide" aria-labelledby="register-title">
+        <div class="auth-heading">
+            <p class="eyebrow">Join StudyBuddy</p>
+            <h1 id="register-title">Create your student account</h1>
+            <p>Start with your account, then add courses and study preferences to your profile.</p>
+        </div>
+
+        <div class="auth-alert" role="alert" aria-live="polite" data-form-status hidden></div>
+
+        <form class="auth-form" data-auth-form data-endpoint="/api/auth/register" data-mode="register" novalidate>
+            <div class="form-row">
+                <div class="form-field">
+                    <label for="firstName">First name</label>
+                    <input id="firstName" name="firstName" type="text" autocomplete="given-name" maxlength="100" required autofocus>
+                    <span class="field-error" data-field-error="firstName"></span>
+                </div>
+                <div class="form-field">
+                    <label for="lastName">Last name</label>
+                    <input id="lastName" name="lastName" type="text" autocomplete="family-name" maxlength="100" required>
+                    <span class="field-error" data-field-error="lastName"></span>
+                </div>
+            </div>
+
+            <div class="form-field">
+                <label for="email">Email address</label>
+                <input id="email" name="email" type="email" autocomplete="email" maxlength="255" required>
+                <span class="field-error" data-field-error="email"></span>
+            </div>
+
+            <div class="form-row">
+                <div class="form-field">
+                    <label for="password">Password</label>
+                    <input id="password" name="password" type="password" autocomplete="new-password" minlength="8" maxlength="72" required aria-describedby="password-help">
+                    <small id="password-help">Use 8–72 characters.</small>
+                    <span class="field-error" data-field-error="password"></span>
+                </div>
+                <div class="form-field">
+                    <label for="confirmPassword">Confirm password</label>
+                    <input id="confirmPassword" name="confirmPassword" type="password" autocomplete="new-password" required>
+                    <span class="field-error" data-field-error="confirmPassword"></span>
+                </div>
+            </div>
+
+            <button class="auth-submit" type="submit" data-submit-button>Create account</button>
+        </form>
+
+        <p class="auth-switch">Already have an account? <a th:href="@{/login}" href="/login">Log in</a></p>
+    </section>
+</main>
+<div th:replace="~{fragments/footer :: footer}"></div>
+<script th:src="@{/js/main.js}" src="/js/main.js"></script>
+<script th:src="@{/js/auth.js}" src="/js/auth.js"></script>
+</body>
+</html>
