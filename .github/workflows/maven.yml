@@ -26,4 +26,4 @@ jobs:
           cache-dependency-path: Application/studybuddy/studybuddy/pom.xml
 
       - name: Build with Maven
-        run: sh mvnw -B clean verify
+        run: sh ./mvnw -B clean verify
