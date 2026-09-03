@@ -1,6 +1,7 @@
 package studdybuddy.exception;
 
 import org.springframework.http.HttpStatus;
+import studdybuddy.controller.AiController;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
@@ -9,8 +10,8 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 import java.util.HashMap;
 import java.util.Map;
 
-@RestControllerAdvice
-public class GlobalExceptionHandler {
+@RestControllerAdvice(assignableTypes = AiController.class)
+public class AiExceptionHandler {
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
