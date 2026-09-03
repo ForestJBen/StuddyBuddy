@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Create your StudyBuddy profile and choose the courses, goals and study preferences used for matching.">
+    <meta name="_csrf" th:if="${_csrf != null}" th:content="${_csrf.token}">
+    <meta name="_csrf_header" th:if="${_csrf != null}" th:content="${_csrf.headerName}">
+    <title>My Profile | StudyBuddy</title>
+    <link rel="stylesheet" th:href="@{/css/main.css}" href="/css/main.css">
+    <link rel="stylesheet" th:href="@{/css/profile.css}" href="/css/profile.css">
+</head>
+<body>
+<div th:replace="~{fragments/header :: header}"></div>
+<main class="profile-page">
+    <section class="profile-heading container" aria-labelledby="profile-title">
+        <div>
+            <p class="eyebrow">Student profile</p>
+            <h1 id="profile-title">Help us find your best study partners.</h1>
+            <p>Tell StudyBuddy what you study, how you prefer to learn and when you are normally available.</p>
+        </div>
+        <div class="profile-progress" aria-label="Profile completion">
+            <span>Profile completion</span>
+            <strong data-profile-progress>0%</strong>
+        </div>
+    </section>
+
+    <section class="profile-content container" aria-label="Profile editor">
+        <form class="profile-form" data-profile-form novalidate>
+            <div class="form-section">
+                <div class="form-section-heading">
+                    <span class="section-number" aria-hidden="true">01</span>
+                    <div>
+                        <h2>Study information</h2>
+                        <p>These details help narrow recommendations to relevant students.</p>
+                    </div>
+                </div>
+
+                <div class="form-grid">
+                    <div class="form-field">
+                        <label for="programme">Programme <span aria-hidden="true">*</span></label>
+                        <input id="programme" name="programme" type="text" maxlength="100" autocomplete="organization-title" required placeholder="e.g. Bachelor of Information Sciences">
+                        <p class="field-error" data-field-error="programme"></p>
+                    </div>
+                    <div class="form-field">
+                        <label for="year">Year of study <span aria-hidden="true">*</span></label>
+                        <select id="year" name="year" required>
+                            <option value="">Select a year</option>
+                            <option value="1">Year 1</option>
+                            <option value="2">Year 2</option>
+                            <option value="3">Year 3</option>
+                            <option value="4">Year 4</option>
+                            <option value="5">Year 5+</option>
+                        </select>
+                        <p class="field-error" data-field-error="year"></p>
+                    </div>
+                </div>
+
+                <fieldset class="form-field course-fieldset">
+                    <legend>Courses</legend>
+                    <p class="field-help">Choose all courses you want to use for study partner matching.</p>
+                    <div class="course-status" data-course-status role="status">Loading courses...</div>
+                    <div class="course-options" data-course-options></div>
+                    <p class="field-error" data-field-error="courseIds"></p>
+                </fieldset>
+            </div>
+
+            <div class="form-section">
+                <div class="form-section-heading">
+                    <span class="section-number" aria-hidden="true">02</span>
+                    <div>
+                        <h2>Study preferences</h2>
+                        <p>Short, practical answers are enough for the first version.</p>
+                    </div>
+                </div>
+
+                <div class="form-field">
+                    <label for="goals">Study goals</label>
+                    <textarea id="goals" name="goals" maxlength="500" rows="4" placeholder="e.g. Prepare for exams and improve Java skills"></textarea>
+                    <div class="field-meta"><span>What would you like to achieve?</span><span data-character-count="goals">0/500</span></div>
+                    <p class="field-error" data-field-error="goals"></p>
+                </div>
+
+                <div class="form-grid">
+                    <div class="form-field">
+                        <label for="studyStyle">Preferred study style</label>
+                        <select id="studyStyle" name="studyStyle">
+                            <option value="">Select a study style</option>
+                            <option value="Individual">Individual preparation</option>
+                            <option value="Group discussion">Group discussion</option>
+                            <option value="Visual learning">Visual learning</option>
+                            <option value="Practice-based">Practice-based</option>
+                            <option value="Mixed">Mixed approach</option>
+                        </select>
+                        <p class="field-error" data-field-error="studyStyle"></p>
+                    </div>
+                    <div class="form-field">
+                        <label for="availability">General availability</label>
+                        <textarea id="availability" name="availability" maxlength="500" rows="3" placeholder="e.g. Weekday evenings and Saturday afternoons"></textarea>
+                        <div class="field-meta"><span>Detailed scheduling can be added later.</span><span data-character-count="availability">0/500</span></div>
+                        <p class="field-error" data-field-error="availability"></p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="form-actions">
+                <button class="logout-button" type="button" data-logout-button>Log out</button>
+                <div class="save-status" data-save-status role="status" aria-live="polite"></div>
+                <button type="submit" data-save-button>Save profile draft</button>
+            </div>
+        </form>
+
+        <aside class="profile-summary" aria-labelledby="summary-title">
+            <p class="eyebrow">Matching preview</p>
+            <h2 id="summary-title">Your profile summary</h2>
+            <dl class="summary-list">
+                <div><dt>Programme</dt><dd data-summary="programme">Not added</dd></div>
+                <div><dt>Year</dt><dd data-summary="year">Not added</dd></div>
+                <div><dt>Courses</dt><dd data-summary="courses">No courses selected</dd></div>
+                <div><dt>Study style</dt><dd data-summary="studyStyle">Not added</dd></div>
+                <div><dt>Availability</dt><dd data-summary="availability">Not added</dd></div>
+            </dl>
+            <div class="integration-note">
+                <strong>Development status</strong>
+                <p>Course data uses the API when available. Profile drafts remain in this browser until the Profile API is connected.</p>
+            </div>
+        </aside>
+    </section>
+</main>
+<div th:replace="~{fragments/footer :: footer}"></div>
+<script th:src="@{/js/main.js}" src="/js/main.js"></script>
+<script th:src="@{/js/profile.js}" src="/js/profile.js"></script>
+</body>
+</html>
