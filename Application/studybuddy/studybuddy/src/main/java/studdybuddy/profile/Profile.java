@@ -110,4 +110,6 @@ public class Profile {
     public Set<Course> getCourses() {
         return courses;
     }
+
+    public User getUser() {return user;}
 }
