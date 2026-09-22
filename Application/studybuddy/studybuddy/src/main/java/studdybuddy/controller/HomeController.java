@@ -25,4 +25,6 @@ public class HomeController {
     public String showProfilePage() {
         return "profile";
     }
+    @GetMapping("/sessions")
+    public String showSessionsPage() {return "sessions";}
 }

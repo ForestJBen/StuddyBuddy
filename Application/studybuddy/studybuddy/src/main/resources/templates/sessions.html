@@ -1,0 +1,255 @@
+<!DOCTYPE html>
+<html lang="en"
+      xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
+    <meta name="_csrf"
+          th:if="${_csrf != null}"
+          th:content="${_csrf.token}">
+
+    <meta name="_csrf_header"
+          th:if="${_csrf != null}"
+          th:content="${_csrf.headerName}">
+
+    <title>Study Sessions | StudyBuddy</title>
+
+    <link rel="stylesheet"
+          th:href="@{/css/main.css}"
+          href="/css/main.css">
+
+    <link rel="stylesheet"
+          th:href="@{/css/sessions.css}"
+          href="/css/sessions.css">
+</head>
+
+<body>
+
+<div th:replace="~{fragments/header :: header}"></div>
+
+<main class="container">
+
+    <p class="eyebrow">
+        AI Study Session Facilitator
+    </p>
+
+    <h1>
+        Plan and review your study session
+    </h1>
+
+    <section>
+
+        <h2>01 Plan your session</h2>
+
+        <p>
+            Tell StudyBuddy what your group wants to study.
+        </p>
+
+        <form data-plan-form>
+
+            <div>
+                <label for="course">Course</label>
+
+                <input id="course"
+                       name="course"
+                       type="text"
+                       placeholder="e.g. 159.302 Artificial Intelligence"
+                       required>
+            </div>
+
+            <div>
+                <label for="topic">Topic</label>
+
+                <input id="topic"
+                       name="topic"
+                       type="text"
+                       placeholder="e.g. A* Search"
+                       required>
+            </div>
+
+            <div>
+                <label for="goal">Study goal</label>
+
+                <textarea id="goal"
+                          name="goal"
+                          rows="4"
+                          placeholder="What do you want to achieve in this session?"
+                          required></textarea>
+
+                <button type="button"
+                        data-translate-goal>
+                    Translate to English
+                </button>
+
+                <span data-goal-translation-status></span>
+            </div>
+
+            <div>
+                <label for="studyStyle">Study style</label>
+
+                <select id="studyStyle"
+                        name="studyStyle">
+
+                    <option value="">
+                        Select a study style
+                    </option>
+
+                    <option value="Group discussion">
+                        Group discussion
+                    </option>
+
+                    <option value="Practice-based">
+                        Practice-based
+                    </option>
+
+                    <option value="Visual learning">
+                        Visual learning
+                    </option>
+
+                    <option value="Mixed">
+                        Mixed approach
+                    </option>
+
+                </select>
+            </div>
+
+            <div>
+                <label for="groupSize">Group size</label>
+
+                <input id="groupSize"
+                       name="groupSize"
+                       type="number"
+                       min="1"
+                       value="2"
+                       required>
+            </div>
+
+            <div>
+                <label for="duration">
+                    Duration (minutes)
+                </label>
+
+                <input id="duration"
+                       name="duration"
+                       type="number"
+                       min="1"
+                       value="60"
+                       required>
+            </div>
+
+            <button type="submit"
+                    data-plan-button>
+                Generate AI Study Plan
+            </button>
+
+            <p data-plan-status
+               role="status">
+            </p>
+
+        </form>
+
+        <div id="plan-result" hidden>
+
+            <h2>Your AI Study Plan</h2>
+
+            <h3>Icebreaker</h3>
+            <p id="plan-icebreaker"></p>
+
+            <h3>Discussion Prompts</h3>
+            <ul id="plan-prompts"></ul>
+
+            <h3>Agenda</h3>
+            <ol id="plan-agenda"></ol>
+
+            <h3>Checklist</h3>
+            <ul id="plan-checklist"></ul>
+
+        </div>
+
+    </section>
+
+    <section>
+
+        <h2>02 Complete your session</h2>
+
+        <p>
+            Add your session notes and generate an AI summary.
+        </p>
+
+        <form data-summary-form>
+
+            <div>
+
+                <label for="notes">
+                    Session Notes
+                </label>
+
+                <textarea id="notes"
+                          name="notes"
+                          rows="7"
+                          placeholder="Write what your group completed, discussed, or did not finish..."
+                          required></textarea>
+
+                <button type="button"
+                        data-translate-notes>
+                    Translate to English
+                </button>
+
+                <span data-notes-translation-status></span>
+
+            </div>
+
+            <button type="submit"
+                    data-summary-button>
+                Generate AI Session Summary
+            </button>
+
+            <p data-summary-status
+               role="status">
+            </p>
+
+        </form>
+
+        <div id="summary-result"
+             hidden>
+
+            <h2>AI Session Summary</h2>
+
+            <h3>Session Overview</h3>
+            <p id="summary-overview"></p>
+
+            <h3>Topics Completed</h3>
+            <ul id="summary-topics"></ul>
+
+            <h3>Key Discussion Points</h3>
+            <ul id="summary-points"></ul>
+
+            <h3>Planned but Not Completed</h3>
+            <ul id="summary-not-completed"></ul>
+
+            <h3>Remaining Problems</h3>
+            <ul id="summary-problems"></ul>
+
+            <h3>Follow-up Tasks</h3>
+            <ul id="summary-tasks"></ul>
+
+            <h3>Next Session Goal</h3>
+            <p id="summary-next-goal"></p>
+
+        </div>
+
+    </section>
+
+</main>
+
+<div th:replace="~{fragments/footer :: footer}"></div>
+
+<script th:src="@{/js/main.js}"
+        src="/js/main.js"></script>
+<script th:src="@{/js/sessions.js}"
+        src="/js/sessions.js"></script>
+
+</body>
+</html>
