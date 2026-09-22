@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en"
+      xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
+
+    <title>Find Buddies | StudyBuddy</title>
+
+    <link rel="stylesheet"
+          th:href="@{/css/main.css}"
+          href="/css/main.css">
+    <link rel="stylesheet"
+          th:href="@{/css/matches.css}"
+          href="/css/matches.css">
+</head>
+
+<body>
+
+<div th:replace="~{fragments/header :: header}"></div>
+
+<main class="container matches-page">
+
+    <p class="eyebrow">
+        Study Partner Matching
+    </p>
+
+    <h1>Find Study Buddies</h1>
+
+    <p class="matches-description">
+        StudyBuddy recommends students based on your
+        courses, availability, study goals, study style
+        and year level.
+    </p>
+
+    <p data-matches-status
+       role="status">
+        Loading recommendations...
+    </p>
+
+    <div data-matches-list>
+    </div>
+
+</main>
+
+<div th:replace="~{fragments/footer :: footer}"></div>
+
+<script th:src="@{/js/main.js}"
+        src="/js/main.js"></script>
+
+<script th:src="@{/js/matches.js}"
+        src="/js/matches.js"></script>
+
+</body>
+</html>

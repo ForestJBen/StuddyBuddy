@@ -1,0 +1,85 @@
+.messages-page {
+    max-width: 850px;
+    margin: 0 auto;
+    padding: 3rem 1.5rem 5rem;
+}
+
+.messages-page h1 {
+    margin-bottom: 0.75rem;
+}
+
+.chat-box {
+    background: white;
+    border: 1px solid #dfe5ee;
+    border-radius: 14px;
+    padding: 1.5rem;
+    margin-top: 2rem;
+}
+
+#message-list {
+    min-height: 250px;
+    max-height: 450px;
+    overflow-y: auto;
+    padding: 1rem;
+    background: #f7f9fc;
+    border-radius: 10px;
+    margin-bottom: 1.5rem;
+}
+
+#message-list > div {
+    background: white;
+    border: 1px solid #e0e6ee;
+    border-radius: 10px;
+    padding: 0.8rem 1rem;
+    margin-bottom: 0.8rem;
+}
+
+#message-list strong {
+    display: block;
+    margin-bottom: 0.3rem;
+}
+
+#message-list p {
+    margin: 0;
+}
+
+#message-form {
+    border-top: 1px solid #dfe5ee;
+    padding-top: 1.5rem;
+}
+
+#message-form label {
+    display: block;
+    font-weight: 600;
+    margin-bottom: 0.5rem;
+}
+
+#message-content {
+    width: 100%;
+    box-sizing: border-box;
+    padding: 0.8rem;
+    border: 1px solid #cfd7e3;
+    border-radius: 8px;
+    resize: vertical;
+    font: inherit;
+    margin-bottom: 0.8rem;
+}
+
+#message-status {
+    margin-top: 0.8rem;
+}
+
+@media (max-width: 700px) {
+
+    .messages-page {
+        padding: 2rem 1rem 4rem;
+    }
+
+    .chat-box {
+        padding: 1rem;
+    }
+
+    #message-list {
+        max-height: 350px;
+    }
+}
