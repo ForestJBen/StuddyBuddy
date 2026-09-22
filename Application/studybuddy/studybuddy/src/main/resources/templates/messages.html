@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en"
+      xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
+
+    <meta name="_csrf"
+          th:if="${_csrf != null}"
+          th:content="${_csrf.token}">
+
+    <meta name="_csrf_header"
+          th:if="${_csrf != null}"
+          th:content="${_csrf.headerName}">
+
+    <title>Messages | StudyBuddy</title>
+
+    <link rel="stylesheet"
+          th:href="@{/css/main.css}"
+          href="/css/main.css">
+
+    <link rel="stylesheet"
+          th:href="@{/css/messages.css}"
+          href="/css/messages.css">
+</head>
+
+<body>
+
+<div th:replace="~{fragments/header :: header}"></div>
+
+<main class="container messages-page">
+
+    <p class="eyebrow">
+        Study Buddy Messaging
+    </p>
+
+    <h1>Chat with your study buddy</h1>
+
+    <p>
+        Send a simple message to organise your study session.
+    </p>
+
+    <div class="chat-box">
+
+        <div id="message-list">
+            Loading messages...
+        </div>
+
+        <form id="message-form">
+
+            <label for="message-content">
+                Message
+            </label>
+
+            <textarea id="message-content"
+                      rows="4"
+                      maxlength="1000"
+                      placeholder="Write a message..."
+                      required></textarea>
+
+            <button type="submit">
+                Send
+            </button>
+
+            <p id="message-status"
+               role="status">
+            </p>
+
+        </form>
+
+    </div>
+
+</main>
+
+<div th:replace="~{fragments/footer :: footer}"></div>
+
+<script th:src="@{/js/main.js}"
+        src="/js/main.js"></script>
+
+<script th:src="@{/js/messages.js}"
+        src="/js/messages.js"></script>
+
+</body>
+</html>

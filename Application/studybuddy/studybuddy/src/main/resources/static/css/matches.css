@@ -1,0 +1,69 @@
+.matches-page {
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 3rem 1.5rem 5rem;
+}
+
+.matches-page h1 {
+    margin-bottom: 0.75rem;
+}
+
+.matches-description {
+    margin-bottom: 1.5rem;
+}
+
+[data-matches-status] {
+    margin-bottom: 1.5rem;
+}
+
+[data-matches-list] {
+    display: grid;
+    gap: 1.5rem;
+}
+
+.recommendation-card {
+    background: white;
+    border: 1px solid #dfe5ee;
+    border-radius: 14px;
+    padding: 1.75rem;
+}
+
+.recommendation-card h2 {
+    margin-top: 0;
+    margin-bottom: 0.5rem;
+}
+
+.recommendation-card > p {
+    margin-top: 0;
+}
+
+.recommendation-card strong {
+    display: block;
+    margin-top: 1.25rem;
+    margin-bottom: 0.4rem;
+}
+
+.recommendation-card ul {
+    margin-bottom: 1.5rem;
+    padding-left: 1.5rem;
+}
+
+.recommendation-card li {
+    margin-bottom: 0.4rem;
+}
+
+.recommendation-card .button {
+    display: inline-block;
+    margin-top: 0.5rem;
+    text-decoration: none;
+}
+
+@media (max-width: 700px) {
+    .matches-page {
+        padding: 2rem 1rem 4rem;
+    }
+
+    .recommendation-card {
+        padding: 1.25rem;
+    }
+}
