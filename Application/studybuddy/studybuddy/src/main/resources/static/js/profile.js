@@ -1,7 +1,7 @@
 const profileConfiguration = {
     courseEndpoint: "/api/courses",
     profileEndpoint: "/api/profile",
-    profileApiEnabled: false,
+    profileApiEnabled: true,
     localDraftKey: "studybuddy.profileDraft"
 };
 
