@@ -35,4 +35,7 @@ public class HomeController {
     @GetMapping("/messages/{userId}")
     public String showMessagesPage() {return "messages";}
 
+    @GetMapping("/groups")
+    public String showGroupsPage() {return "groups";}
+
 }
