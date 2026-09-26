@@ -126,6 +126,28 @@
             </div>
         </aside>
     </section>
+
+    <section class="recommendation-section container"
+             aria-labelledby="recommendation-title">
+        <div class="recommendation-heading">
+            <p class="eyebrow">Study partner matching</p>
+            <h2 id="recommendation-title">
+                Your recommended study buddies
+            </h2>
+            <p>
+                Recommendations are based on your courses,
+                availability, study goals, study style and year level.
+            </p>
+        </div>
+        <div class="recommendation-status"
+             data-recommendation-status
+             role="status">
+            Save your profile to see study partner recommendations.
+        </div>
+        <div class="recommendation-list"
+             data-recommendation-list>
+        </div>
+    </section>
 </main>
 <div th:replace="~{fragments/footer :: footer}"></div>
 <script th:src="@{/js/main.js}" src="/js/main.js"></script>

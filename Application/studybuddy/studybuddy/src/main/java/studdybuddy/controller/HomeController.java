@@ -25,4 +25,17 @@ public class HomeController {
     public String showProfilePage() {
         return "profile";
     }
+
+    @GetMapping("/sessions")
+    public String showSessionsPage() {return "sessions";}
+
+    @GetMapping("/matches")
+    public String showMatchesPage() {return "matches";}
+
+    @GetMapping("/messages/{userId}")
+    public String showMessagesPage() {return "messages";}
+
+    @GetMapping("/groups")
+    public String showGroupsPage() {return "groups";}
+
 }

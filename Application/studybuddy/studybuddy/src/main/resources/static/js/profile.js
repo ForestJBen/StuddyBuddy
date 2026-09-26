@@ -1,7 +1,7 @@
 const profileConfiguration = {
     courseEndpoint: "/api/courses",
     profileEndpoint: "/api/profile",
-    profileApiEnabled: false,
+    profileApiEnabled: true,
     localDraftKey: "studybuddy.profileDraft"
 };
 
@@ -150,6 +150,7 @@ function createProfilePage(form) {
                 });
                 populate(response);
                 setSaveStatus("Profile saved successfully.", "success");
+                await loadRecommendations();
             } else {
                 const localProfile = { ...request, courses: getSelectedCourses() };
                 window.localStorage.setItem(profileConfiguration.localDraftKey, JSON.stringify(localProfile));
@@ -329,4 +330,202 @@ function emptyProfile() {
         studyStyle: "",
         availability: ""
     };
+}
+
+async function loadRecommendations() {
+
+    const status =
+        document.querySelector(
+            "[data-recommendation-status]"
+        );
+
+    const list =
+        document.querySelector(
+            "[data-recommendation-list]"
+        );
+
+    if (!status || !list) {
+        return;
+    }
+
+    status.textContent =
+        "Finding your best study partners...";
+
+    list.innerHTML = "";
+
+    try {
+
+        const recommendations =
+            await requestJson(
+                "/api/recommendations"
+            );
+
+        if (recommendations.length === 0) {
+
+            status.textContent =
+                "No matching study partners are available yet.";
+
+            return;
+        }
+
+        status.textContent =
+            `${recommendations.length} recommended study partners found.`;
+
+        recommendations.forEach(
+            recommendation => {
+
+                const card =
+                    createRecommendationCard(
+                        recommendation
+                    );
+
+                list.appendChild(card);
+            }
+        );
+
+    } catch (error) {
+
+        console.error(
+            "Recommendation error:",
+            error
+        );
+
+        status.textContent =
+            "Recommendations could not be loaded. Please try again.";
+    }
+}
+
+function createRecommendationCard(recommendation) {
+
+    const card =
+        document.createElement("article");
+
+    card.className =
+        "recommendation-card";
+
+
+    const header =
+        document.createElement("div");
+
+    header.className =
+        "recommendation-card-header";
+
+
+    const name =
+        document.createElement("h3");
+
+    name.textContent =
+        `${recommendation.firstName} ${recommendation.lastName}`;
+
+
+    const score =
+        document.createElement("span");
+
+    score.className =
+        "recommendation-score";
+
+    score.textContent =
+        `${recommendation.matchScore.toFixed(1)}% match`;
+
+
+    header.appendChild(name);
+    header.appendChild(score);
+
+    card.appendChild(header);
+
+
+    const courseSection =
+        document.createElement("div");
+
+    courseSection.className =
+        "recommendation-detail";
+
+
+    const courseTitle =
+        document.createElement("strong");
+
+    courseTitle.textContent =
+        "Shared courses";
+
+
+    const courseText =
+        document.createElement("p");
+
+
+    if (
+        recommendation.sharedCourses &&
+        recommendation.sharedCourses.length > 0
+    ) {
+
+        courseText.textContent =
+            recommendation.sharedCourses.join(" · ");
+
+    } else {
+
+        courseText.textContent =
+            "No shared courses listed.";
+    }
+
+
+    courseSection.appendChild(courseTitle);
+    courseSection.appendChild(courseText);
+
+    card.appendChild(courseSection);
+
+
+    const reasonSection =
+        document.createElement("div");
+
+    reasonSection.className =
+        "recommendation-detail";
+
+
+    const reasonTitle =
+        document.createElement("strong");
+
+    reasonTitle.textContent =
+        "Why this match?";
+
+
+    const reasonList =
+        document.createElement("ul");
+
+
+    if (
+        recommendation.reasons &&
+        recommendation.reasons.length > 0
+    ) {
+
+        recommendation.reasons.forEach(
+            reason => {
+
+                const item =
+                    document.createElement("li");
+
+                item.textContent =
+                    reason;
+
+                reasonList.appendChild(item);
+            }
+        );
+
+    } else {
+
+        const item =
+            document.createElement("li");
+
+        item.textContent =
+            "Compatible study profile.";
+
+        reasonList.appendChild(item);
+    }
+
+
+    reasonSection.appendChild(reasonTitle);
+    reasonSection.appendChild(reasonList);
+
+    card.appendChild(reasonSection);
+
+
+    return card;
 }

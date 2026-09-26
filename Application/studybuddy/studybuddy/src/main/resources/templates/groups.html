@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="en"
+      xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
+
+    <meta name="_csrf"
+          th:if="${_csrf != null}"
+          th:content="${_csrf.token}">
+
+    <meta name="_csrf_header"
+          th:if="${_csrf != null}"
+          th:content="${_csrf.headerName}">
+
+    <title>Study Groups | StudyBuddy</title>
+
+    <link rel="stylesheet"
+          th:href="@{/css/main.css}"
+          href="/css/main.css">
+
+    <link rel="stylesheet"
+          th:href="@{/css/groups.css}"
+          href="/css/groups.css">
+</head>
+
+<body>
+
+<div th:replace="~{fragments/header :: header}"></div>
+
+<main class="container groups-page">
+
+    <p class="eyebrow">
+        Study Groups
+    </p>
+
+    <h1>Find or create a study group</h1>
+
+    <p class="groups-description">
+        Join students studying the same courses,
+        organise meetings and share messages with your group.
+    </p>
+
+    <section class="group-section">
+
+        <h2>Create a Study Group</h2>
+
+        <form id="create-group-form">
+
+            <div>
+                <label for="group-name">
+                    Group name
+                </label>
+
+                <input id="group-name"
+                       name="name"
+                       type="text"
+                       placeholder="e.g. 159.302 Exam Study Group"
+                       required>
+            </div>
+
+            <div>
+                <label for="group-course">
+                    Course
+                </label>
+
+                <input id="group-course"
+                       name="course"
+                       type="text"
+                       placeholder="e.g. 159.302"
+                       required>
+            </div>
+
+            <div>
+                <label for="group-description">
+                    Description
+                </label>
+
+                <textarea id="group-description"
+                          name="description"
+                          rows="4"
+                          placeholder="What will this group study?"
+                          required></textarea>
+            </div>
+
+            <div>
+                <label for="meeting-time">
+                    Meeting time
+                </label>
+
+                <input id="meeting-time"
+                       name="meetingTime"
+                       type="text"
+                       placeholder="e.g. Saturday 2:00 PM">
+            </div>
+
+            <div>
+                <label for="location">
+                    Location
+                </label>
+
+                <input id="location"
+                       name="location"
+                       type="text"
+                       placeholder="e.g. Library Level 2">
+            </div>
+
+            <button type="submit">
+                Create Group
+            </button>
+
+            <p id="group-form-status"
+               role="status">
+            </p>
+
+        </form>
+
+    </section>
+
+    <section class="group-section">
+
+        <h2>Available Groups</h2>
+
+        <p id="groups-status"
+           role="status">
+            Group data will appear here when the Group API is connected.
+        </p>
+
+        <div id="groups-list">
+        </div>
+
+    </section>
+
+</main>
+
+<div th:replace="~{fragments/footer :: footer}"></div>
+
+<script th:src="@{/js/main.js}"
+        src="/js/main.js"></script>
+
+</body>
+</html>
