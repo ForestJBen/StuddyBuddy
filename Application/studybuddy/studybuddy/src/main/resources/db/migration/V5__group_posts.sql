@@ -11,13 +11,11 @@ CREATE TABLE group_posts(
 );
 
 ALTER TABLE study_groups
-    RENAME COLUMN group_name TO name;
-ALTER TABLE study_groups
-    MODIFY COLUMN name VARCHAR(120) NOT NULL;
-ALTER TABLE study_groups
-    ADD COLUMN course VARCHAR(20) NOT NULL;
+    CHANGE COLUMN group_name name VARCHAR(120) NOT NULL;
 ALTER TABLE study_groups
     MODIFY COLUMN description VARCHAR(2000) NOT NULL;
+ALTER TABLE study_groups
+    ADD COLUMN course VARCHAR(20) NOT NULL;
 ALTER TABLE study_groups
     ADD COLUMN meeting_time VARCHAR(100);
 ALTER TABLE study_groups
