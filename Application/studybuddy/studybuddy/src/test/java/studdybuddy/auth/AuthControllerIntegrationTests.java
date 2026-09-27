@@ -169,11 +169,13 @@ class AuthControllerIntegrationTests {
     }
 
     @Test
-    @WithMockUser
+    @WithMockUser(username = "alex@example.com")
     void profilePageContainsLogoutControl() throws Exception {
+        saveUser("alex@example.com", "Password123!");
         mockMvc.perform(get("/profile"))
                 .andExpect(status().isOk())
                 .andExpect(view().name("profile"))
+                .andExpect(content().string(org.hamcrest.Matchers.containsString("<dt>Name</dt><dd>Alex Chen</dd>")))
                 .andExpect(content().string(org.hamcrest.Matchers.containsString("data-logout-button")))
                 .andExpect(content().string(org.hamcrest.Matchers.containsString("data-navigation-logout")))
                 .andExpect(content().string(org.hamcrest.Matchers.containsString("href=\"/matches\"")))

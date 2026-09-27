@@ -60,3 +60,65 @@
         padding: 1.25rem;
     }
 }
+.group-section-heading, .group-actions {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: .75rem;
+    margin-bottom: 1rem;
+}
+.group-section-heading h2 { margin: 0; }
+.group-actions { justify-content: flex-start; margin: 1rem 0 0; }
+.group-card, .group-post {
+    border: 1px solid var(--color-border);
+    border-radius: 10px;
+    padding: 1.25rem;
+    overflow-wrap: anywhere;
+}
+.group-card h3, .group-post p { margin-top: 0; }
+.group-description, .group-post-content { white-space: pre-wrap; }
+.group-meta { color: var(--color-muted); font-size: .9rem; }
+.group-badge { font-weight: 600; color: var(--color-primary-dark); }
+.group-feedback:not(:empty) {
+    padding: .75rem 1rem;
+    border-left: 4px solid var(--color-primary-dark);
+    border-radius: 6px;
+    background: var(--color-primary-soft);
+    overflow-wrap: anywhere;
+}
+.group-feedback[data-state="success"] { border-color: var(--color-success); background: var(--color-success-soft); }
+.group-feedback[data-state="error"] { border-color: #b42318; background: #fff1f0; }
+.groups-page button:disabled { opacity: .65; cursor: default; }
+#group-detail { scroll-margin-top: 6rem; }
+#group-detail[hidden], #group-post-form[hidden] { display: none; }
+#group-posts { display: grid; gap: .75rem; margin: 1rem 0; }
+#group-post-form label { display: block; font-weight: 600; margin-bottom: .5rem; }
+#group-post-content { width: 100%; padding: .8rem; border: 1px solid var(--color-border); border-radius: 8px; font: inherit; resize: vertical; margin-bottom: .75rem; }
+@media (max-width: 700px) {
+    .group-section-heading { align-items: flex-start; }
+    .group-card, .group-post { padding: 1rem; }
+}
+
+.groups-page dialog {
+    width: min(540px, calc(100% - 2rem));
+    max-height: 85vh;
+    overflow-y: auto;
+    border: 1px solid var(--color-border);
+    border-radius: 14px;
+    padding: 1.5rem;
+    color: var(--color-text);
+    box-shadow: var(--shadow-card);
+}
+.groups-page dialog::backdrop { background: rgba(23, 32, 51, .5); }
+.groups-page dialog h2 { margin-top: 0; }
+.groups-page dialog label { display: block; font-weight: 600; margin: .8rem 0 .4rem; }
+.groups-page dialog input:not([type="checkbox"]), .groups-page dialog textarea {
+    width: 100%; padding: .7rem; border: 1px solid var(--color-border);
+    border-radius: 8px; font: inherit;
+}
+.groups-page dialog textarea { resize: vertical; }
+.groups-page .group-danger { color: #b42318; background: #fff; border-color: #b42318; }
+.groups-page .group-danger:hover { background: #fff1f0; }
+.group-delete-confirm { font-weight: 400; }
+#delete-group-name { font-weight: 700; overflow-wrap: anywhere; }
