@@ -1,7 +1,4 @@
-ALTER TABLE group_members
-    DROP FOREIGN KEY group_members_ibfk_1;
-ALTER TABLE group_members
-    DROP FOREIGN KEY group_members_ibfk_2;
+
 
 ALTER TABLE group_members
     DROP PRIMARY KEY;
