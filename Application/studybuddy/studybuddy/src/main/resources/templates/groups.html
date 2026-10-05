@@ -57,6 +57,7 @@
 
                 <input id="group-name"
                        name="name"
+                       maxlength="120"
                        type="text"
                        placeholder="e.g. 159.302 Exam Study Group"
                        required>
@@ -69,6 +70,7 @@
 
                 <input id="group-course"
                        name="course"
+                       maxlength="20"
                        type="text"
                        placeholder="e.g. 159.302"
                        required>
@@ -81,6 +83,7 @@
 
                 <textarea id="group-description"
                           name="description"
+                       maxlength="2000"
                           rows="4"
                           placeholder="What will this group study?"
                           required></textarea>
@@ -93,6 +96,7 @@
 
                 <input id="meeting-time"
                        name="meetingTime"
+                       maxlength="100"
                        type="text"
                        placeholder="e.g. Saturday 2:00 PM">
             </div>
@@ -104,6 +108,7 @@
 
                 <input id="location"
                        name="location"
+                       maxlength="200"
                        type="text"
                        placeholder="e.g. Library Level 2">
             </div>
@@ -113,7 +118,7 @@
             </button>
 
             <p id="group-form-status"
-               role="status">
+               role="status" aria-live="polite">
             </p>
 
         </form>
@@ -122,11 +127,15 @@
 
     <section class="group-section">
 
-        <h2>Available Groups</h2>
+        <div class="group-section-heading">
+            <h2>Available Groups</h2>
+            <button type="button" class="button-secondary" id="refresh-groups">Refresh groups</button>
+        </div>
+        <p id="group-action-status" role="status" aria-live="polite"></p>
 
         <p id="groups-status"
-           role="status">
-            Group data will appear here when the Group API is connected.
+           role="status" aria-live="polite">
+            Loading groups…
         </p>
 
         <div id="groups-list">
@@ -134,6 +143,63 @@
 
     </section>
 
+    <section class="group-section" id="group-detail" hidden aria-labelledby="group-detail-title">
+        <div class="group-section-heading">
+            <h2 id="group-detail-title" tabindex="-1">Group details</h2>
+            <button type="button" class="button-secondary" id="close-group">Close details</button>
+        </div>
+        <div id="group-detail-info"></div>
+        <h3>Members</h3>
+        <button type="button" class="button-secondary" id="refresh-members">Refresh members</button>
+        <p id="members-status" role="status" aria-live="polite"></p>
+        <ul id="group-members"></ul>
+        <h3>Group message board</h3>
+        <button type="button" class="button-secondary" id="refresh-posts">Refresh posts</button>
+        <p id="posts-status" role="status" aria-live="polite"></p>
+        <div id="group-posts"></div>
+        <p id="post-access-note"></p>
+        <form id="group-post-form" hidden>
+            <label for="group-post-content">Your message</label>
+            <textarea id="group-post-content" name="content" rows="3" maxlength="2000" required placeholder="Share a question or organise your next meeting"></textarea>
+            <button type="submit">Post message</button>
+        </form>
+        <p id="post-form-status" role="status" aria-live="polite"></p>
+    </section>
+
+    <dialog id="edit-group-dialog" aria-labelledby="edit-group-title">
+        <form id="edit-group-form">
+            <h2 id="edit-group-title" tabindex="-1">Edit group</h2>
+            <label for="edit-group-name">Group name</label>
+            <input id="edit-group-name" name="name" maxlength="120" required>
+            <label for="edit-group-course">Course</label>
+            <input id="edit-group-course" name="course" maxlength="20" required>
+            <label for="edit-group-description">Description</label>
+            <textarea id="edit-group-description" name="description" rows="3" maxlength="2000" required></textarea>
+            <label for="edit-group-time">Meeting time</label>
+            <input id="edit-group-time" name="meetingTime" maxlength="100">
+            <label for="edit-group-location">Location</label>
+            <input id="edit-group-location" name="location" maxlength="200">
+            <p id="edit-group-status" role="status" aria-live="polite"></p>
+            <div class="group-actions">
+                <button type="submit">Save changes</button>
+                <button type="button" class="button-secondary" data-close-group-dialog>Cancel</button>
+            </div>
+        </form>
+    </dialog>
+
+    <dialog id="delete-group-dialog" aria-labelledby="delete-group-title" aria-describedby="delete-group-warning">
+        <form id="delete-group-form">
+            <h2 id="delete-group-title" tabindex="-1">Delete group</h2>
+            <p id="delete-group-name"></p>
+            <p id="delete-group-warning">This permanently deletes the group, all its memberships and all group posts. Other members will lose access. This cannot be undone.</p>
+            <label class="group-delete-confirm"><input type="checkbox" id="confirm-group-delete" required> I understand and want to delete this group.</label>
+            <p id="delete-group-status" role="status" aria-live="polite"></p>
+            <div class="group-actions">
+                <button type="submit" class="group-danger">Delete permanently</button>
+                <button type="button" class="button-secondary" data-close-group-dialog>Cancel</button>
+            </div>
+        </form>
+    </dialog>
 </main>
 
 <div th:replace="~{fragments/footer :: footer}"></div>
@@ -141,5 +207,6 @@
 <script th:src="@{/js/main.js}"
         src="/js/main.js"></script>
 
+<script th:src="@{/js/groups.js}" src="/js/groups.js"></script>
 </body>
 </html>
