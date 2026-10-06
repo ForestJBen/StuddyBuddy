@@ -17,6 +17,7 @@ import studdybuddy.group.dto.CreateGroupRequest;
 import studdybuddy.group.dto.GroupMemberResponse;
 import studdybuddy.group.dto.GroupPostResponse;
 import studdybuddy.group.dto.GroupResponse;
+import org.springframework.web.bind.annotation.PutMapping;
 
 @RestController
 @RequestMapping("/api/groups")
@@ -47,6 +48,18 @@ public class GroupController {
                 URI.create("/api/groups/" + response.id())
         ).body(response);
     }
+    @PutMapping("/{groupId}")
+    public GroupResponse updateGroup(
+            Authentication authentication,
+            @PathVariable Long groupId,
+            @Valid @RequestBody CreateGroupRequest request
+    ) {
+        return groupService.updateGroup(
+                authentication.getName(),
+                groupId,
+                request
+        );
+    }
 
     @PostMapping("/{groupId}/join")
     public GroupResponse joinGroup(
@@ -62,6 +75,15 @@ public class GroupController {
             @PathVariable Long groupId
     ) {
         return groupService.leaveGroup(authentication.getName(), groupId);
+    }
+
+    @DeleteMapping("/{groupId}")
+    public ResponseEntity<Void> deleteGroup(
+            Authentication authentication,
+            @PathVariable Long groupId
+    ) {
+        groupService.deleteGroup(authentication.getName(), groupId);
+        return ResponseEntity.noContent().build();
     }
 
     @GetMapping("/{groupId}/members")
