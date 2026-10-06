@@ -71,6 +71,27 @@ public class GroupService {
 
         return toGroupResponse(savedGroup, true);
     }
+    @Transactional
+    public GroupResponse updateGroup(
+            String authenticatedEmail,
+            Long groupId,
+            CreateGroupRequest request
+    ) {
+        User currentUser = findCurrentUser(authenticatedEmail);
+        StudyGroup group = findGroup(groupId);
+
+        requireCreator(group, currentUser, "edit");
+
+        group.update(
+                request.name().trim(),
+                request.course().trim(),
+                request.description().trim(),
+                normalizeOptionalText(request.meetingTime()),
+                normalizeOptionalText(request.location())
+        );
+
+        return toGroupResponse(group, true);
+    }
 
     @Transactional
     public GroupResponse joinGroup(String authenticatedEmail, Long groupId) {
@@ -168,6 +189,17 @@ public class GroupService {
         return toPostResponse(savedPost);
     }
 
+    @Transactional
+    public void deleteGroup(String authenticatedEmail, Long groupId) {
+        User currentUser = findCurrentUser(authenticatedEmail);
+        StudyGroup group = findGroup(groupId);
+
+        requireCreator(group, currentUser, "delete");
+
+        studyGroupRepository.delete(group);
+        studyGroupRepository.flush();
+    }
+
     private User findCurrentUser(String authenticatedEmail) {
         String normalizedEmail = authenticatedEmail.trim().toLowerCase(Locale.ROOT);
 
@@ -176,6 +208,15 @@ public class GroupService {
                         HttpStatus.UNAUTHORIZED,
                         "Authentication is required"
                 ));
+    }
+
+    private void requireCreator(StudyGroup group, User currentUser, String action) {
+        if (!group.getCreator().getId().equals(currentUser.getId())) {
+            throw new ResponseStatusException(
+                    HttpStatus.FORBIDDEN,
+                    "Only the group creator can " + action + " this group"
+            );
+        }
     }
 
     private StudyGroup findGroup(Long groupId) {

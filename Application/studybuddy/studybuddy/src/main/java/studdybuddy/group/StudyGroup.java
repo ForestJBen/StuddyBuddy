@@ -69,6 +69,19 @@ public class StudyGroup {
             createdAt = Instant.now();
         }
     }
+    public void update(
+            String name,
+            String course,
+            String description,
+            String meetingTime,
+            String location
+    ) {
+        this.name = name;
+        this.course = course;
+        this.description = description;
+        this.meetingTime = meetingTime;
+        this.location = location;
+    }
 
     public Long getId() { return id; }
     public String getName() { return name; }

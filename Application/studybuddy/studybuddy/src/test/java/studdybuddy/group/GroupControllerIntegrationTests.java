@@ -11,6 +11,7 @@ import org.springframework.mock.web.MockHttpSession;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import studdybuddy.user.User;
 import studdybuddy.user.UserRepository;
 import studdybuddy.user.UserRole;
@@ -24,11 +25,12 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @SpringBootTest(properties = {
-        "spring.datasource.url=jdbc:h2:mem:groups_api_test;MODE=MySQL;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE",
-        "spring.datasource.driver-class-name=org.h2.Driver",
-        "spring.datasource.username=sa",
-        "spring.datasource.password=",
-        "spring.jpa.hibernate.ddl-auto=create-drop"
+        "spring.datasource.url=${DB_URL:jdbc:mysql://localhost:3306/studybuddy_group_test}",
+        "spring.datasource.username=${DB_USERNAME:root}",
+        "spring.datasource.password=${DB_PASSWORD:}",
+        "spring.datasource.driver-class-name=com.mysql.cj.jdbc.Driver",
+        "spring.flyway.enabled=true",
+        "spring.jpa.hibernate.ddl-auto=validate"
 })
 @AutoConfigureMockMvc
 class GroupControllerIntegrationTests {
@@ -212,6 +214,112 @@ class GroupControllerIntegrationTests {
                 .andExpect(jsonPath("$[1].content").value("Second post"));
     }
 
+    @Test
+    void creatorCanUpdateGroup() throws Exception {
+        LoggedInUser alex = createUserAndLogin("Alex", "alex@example.com");
+        StudyGroup group = createGroupWithCreator(alex.user());
+
+        mockMvc.perform(put("/api/groups/{groupId}", group.getId())
+                        .with(csrf())
+                        .session(alex.session())
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(updateGroupJson()))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.id").value(group.getId()))
+                .andExpect(jsonPath("$.name").value("Updated 159.302 Group"))
+                .andExpect(jsonPath("$.course").value("159.302"))
+                .andExpect(jsonPath("$.description").value("Updated revision plan"))
+                .andExpect(jsonPath("$.meetingTime").value("Sunday 3:00 PM"))
+                .andExpect(jsonPath("$.location").value("Library Level 2"))
+                .andExpect(jsonPath("$.creatorId").value(alex.user().getId()))
+                .andExpect(jsonPath("$.memberCount").value(1))
+                .andExpect(jsonPath("$.joined").value(true));
+
+        StudyGroup updatedGroup = studyGroupRepository.findById(group.getId())
+                .orElseThrow();
+        assertThat(updatedGroup.getName()).isEqualTo("Updated 159.302 Group");
+        assertThat(updatedGroup.getCourse()).isEqualTo("159.302");
+        assertThat(updatedGroup.getDescription()).isEqualTo("Updated revision plan");
+        assertThat(updatedGroup.getMeetingTime()).isEqualTo("Sunday 3:00 PM");
+        assertThat(updatedGroup.getLocation()).isEqualTo("Library Level 2");
+    }
+
+    @Test
+    void nonCreatorCannotUpdateGroup() throws Exception {
+        LoggedInUser alex = createUserAndLogin("Alex", "alex@example.com");
+        LoggedInUser sam = createUserAndLogin("Sam", "sam@example.com");
+        StudyGroup group = createGroupWithCreator(alex.user());
+
+        mockMvc.perform(put("/api/groups/{groupId}", group.getId())
+                        .with(csrf())
+                        .session(sam.session())
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(updateGroupJson()))
+                .andExpect(status().isForbidden())
+                .andExpect(jsonPath("$.success").value(false))
+                .andExpect(jsonPath("$.message")
+                        .value("Only the group creator can edit this group"));
+
+        StudyGroup unchangedGroup = studyGroupRepository.findById(group.getId())
+                .orElseThrow();
+        assertThat(unchangedGroup.getName()).isEqualTo("159.302 Exam Study Group");
+    }
+
+    @Test
+    void creatorCanDeleteGroupWithoutPosts() throws Exception {
+        LoggedInUser alex = createUserAndLogin("Alex", "alex@example.com");
+        StudyGroup group = createGroupWithCreator(alex.user());
+
+        mockMvc.perform(delete("/api/groups/{groupId}", group.getId())
+                        .with(csrf())
+                        .session(alex.session()))
+                .andExpect(status().isNoContent());
+
+        assertThat(studyGroupRepository.existsById(group.getId())).isFalse();
+        assertThat(groupMembershipRepository.existsByGroup_IdAndUser_Id(
+                group.getId(), alex.user().getId()
+        )).isFalse();
+    }
+
+    @Test
+    void nonCreatorCannotDeleteGroup() throws Exception {
+        LoggedInUser alex = createUserAndLogin("Alex", "alex@example.com");
+        LoggedInUser sam = createUserAndLogin("Sam", "sam@example.com");
+        StudyGroup group = createGroupWithCreator(alex.user());
+
+        mockMvc.perform(delete("/api/groups/{groupId}", group.getId())
+                        .with(csrf())
+                        .session(sam.session()))
+                .andExpect(status().isForbidden())
+                .andExpect(jsonPath("$.success").value(false))
+                .andExpect(jsonPath("$.message")
+                        .value("Only the group creator can delete this group"));
+
+        assertThat(studyGroupRepository.existsById(group.getId())).isTrue();
+    }
+
+    @Test
+    void missingGroupReturns404() throws Exception {
+        LoggedInUser alex = createUserAndLogin("Alex", "alex@example.com");
+        long missingGroupId = 999_999L;
+
+        mockMvc.perform(put("/api/groups/{groupId}", missingGroupId)
+                        .with(csrf())
+                        .session(alex.session())
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(updateGroupJson()))
+                .andExpect(status().isNotFound())
+                .andExpect(jsonPath("$.success").value(false))
+                .andExpect(jsonPath("$.message").value("Study group not found"));
+
+        mockMvc.perform(delete("/api/groups/{groupId}", missingGroupId)
+                        .with(csrf())
+                        .session(alex.session()))
+                .andExpect(status().isNotFound())
+                .andExpect(jsonPath("$.success").value(false))
+                .andExpect(jsonPath("$.message").value("Study group not found"));
+    }
+
     private StudyGroup createGroupWithCreator(User creator) {
         StudyGroup group = studyGroupRepository.save(new StudyGroup(
                 "159.302 Exam Study Group",
@@ -264,6 +372,17 @@ class GroupControllerIntegrationTests {
                   "location": "Library Level 2"
                 }
                 """;
+    }
+    private String updateGroupJson() {
+        return """
+            {
+              "name": "Updated 159.302 Group",
+              "course": "159.302",
+              "description": "Updated revision plan",
+              "meetingTime": "Sunday 3:00 PM",
+              "location": "Library Level 2"
+            }
+            """;
     }
 
     private record LoggedInUser(User user, MockHttpSession session) {
