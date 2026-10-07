@@ -13,6 +13,7 @@
 <body>
 <div th:replace="~{fragments/header :: header}"></div>
 <main class="profile-page">
+    <p class="container" th:if="${#authorization.expression('hasRole(''ADMIN'')')}"><a href="/admin">Admin dashboard →</a></p>
     <section class="profile-heading container" aria-labelledby="profile-title">
         <div>
             <p class="eyebrow">Student profile</p>

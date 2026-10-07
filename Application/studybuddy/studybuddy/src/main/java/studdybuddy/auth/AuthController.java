@@ -73,9 +73,10 @@ public class AuthController {
                     true,
                     "Login successful",
                     authService.getByEmail(authentication.getName()),
-                    "/profile"
+                    authentication.getAuthorities().stream().anyMatch(a -> a.getAuthority().equals("ROLE_ADMIN"))
+                            ? "/admin" : "/profile"
             );
-        } catch (BadCredentialsException exception) {
+        } catch (org.springframework.security.core.AuthenticationException exception) {
             throw new ResponseStatusException(
                     HttpStatus.UNAUTHORIZED,
                     "Invalid email or password"

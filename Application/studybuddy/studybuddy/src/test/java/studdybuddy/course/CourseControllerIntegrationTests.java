@@ -20,7 +20,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @SpringBootTest
 @AutoConfigureMockMvc
-@WithMockUser
+@WithMockUser(roles="ADMIN")
 class CourseControllerIntegrationTests {
 
     @Autowired
@@ -29,9 +29,12 @@ class CourseControllerIntegrationTests {
     @Autowired
     private CourseRepository courseRepository;
 
+    @Autowired private studdybuddy.user.UserRepository users;
+
     @BeforeEach
     void clearCourses() {
         courseRepository.deleteAll();
+        if (!users.existsByEmail("user")) users.save(new studdybuddy.user.User("Test","Admin","user","hash",studdybuddy.user.UserRole.ADMIN));
     }
 
     @Test

@@ -16,7 +16,7 @@
     <section class="auth-card" aria-labelledby="login-title">
         <div class="auth-heading">
             <p class="eyebrow">Welcome back</p>
-            <h1 id="login-title">Log in to StudyBuddy</h1>
+            <h1 id="login-title" th:text="${param.admin != null ? 'Log in to admin dashboard' : 'Log in to StudyBuddy'}">Log in to StudyBuddy</h1>
             <p>Continue building better study habits with your classmates.</p>
         </div>
 
@@ -38,6 +38,8 @@
             <button class="auth-submit" type="submit" data-submit-button>Log in</button>
         </form>
 
+        <p class="auth-switch" style="font-size: .85rem"><a th:if="${param.admin == null}" href="/login?admin=true">Administrator login</a><a th:if="${param.admin != null}" href="/login">Back to regular login</a></p>
+        <p class="auth-switch" data-regular-entry hidden><a href="/profile">Continue to your profile</a></p>
         <p class="auth-switch">New to StudyBuddy? <a th:href="@{/register}" href="/register">Create an account</a></p>
     </section>
 </main>

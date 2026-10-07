@@ -38,6 +38,11 @@ document.addEventListener("DOMContentLoaded", () => {
                 showStatus(status, "Account created. Taking you to log in…", true);
                 window.setTimeout(() => window.location.assign("/login"), 500);
             } else {
+                if (new URLSearchParams(window.location.search).has("admin") && body.user?.role !== "ADMIN") {
+                    showStatus(status, "This account does not have administrator access.");
+                    document.querySelector("[data-regular-entry]").hidden = false;
+                    return;
+                }
                 window.location.assign(body.redirectUrl || "/profile");
             }
         } catch (error) {

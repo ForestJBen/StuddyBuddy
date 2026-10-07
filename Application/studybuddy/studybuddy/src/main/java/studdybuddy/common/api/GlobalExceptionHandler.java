@@ -12,6 +12,11 @@ import studdybuddy.auth.AuthValidationException;
 @RestControllerAdvice
 public class GlobalExceptionHandler {
 
+    @ExceptionHandler(org.springframework.dao.DataIntegrityViolationException.class)
+    public ResponseEntity<ApiErrorResponse> handleIntegrity(org.springframework.dao.DataIntegrityViolationException exception) {
+        return ResponseEntity.status(409).body(ApiErrorResponse.general("Operation conflicts with existing or linked records. Refresh and try again."));
+    }
+
     @ExceptionHandler(AuthValidationException.class)
     public ResponseEntity<ApiErrorResponse> handleAuthValidation(
             AuthValidationException exception
