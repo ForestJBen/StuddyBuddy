@@ -42,6 +42,7 @@ public class SecurityConfig {
                 .map(user -> org.springframework.security.core.userdetails.User
                         .withUsername(user.getEmail())
                         .password(user.getPasswordHash())
+                        .disabled(!user.isEnabled())
                         .roles(user.getRole().name())
                         .build())
                 .orElseThrow(() -> new UsernameNotFoundException("User not found"));
@@ -55,7 +56,8 @@ public class SecurityConfig {
     @Bean
     SecurityFilterChain securityFilterChain(
             HttpSecurity http,
-            SecurityContextRepository securityContextRepository
+            SecurityContextRepository securityContextRepository,
+            UserRepository users
     ) throws Exception {
         AuthenticationEntryPoint apiAuthenticationEntryPoint = (request, response, exception) -> {
             response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
@@ -64,7 +66,7 @@ public class SecurityConfig {
                     "{\"success\":false,\"message\":\"Authentication is required\"}"
             );
         };
-        http
+        http.addFilterBefore(new AccountStatusFilter(users), org.springframework.security.web.access.intercept.AuthorizationFilter.class)
                 .securityContext(context -> context
                         .securityContextRepository(securityContextRepository))
                 .sessionManagement(session -> session
@@ -73,6 +75,8 @@ public class SecurityConfig {
                         .requestMatchers("/", "/login", "/register", "/css/**", "/js/**").permitAll()
                         .requestMatchers("/api/auth/register", "/api/auth/login").permitAll()
                         .requestMatchers(org.springframework.http.HttpMethod.GET, "/api/courses", "/api/courses/**").permitAll()
+                        .requestMatchers("/api/courses", "/api/courses/**").hasRole("ADMIN")
+                        .requestMatchers("/admin", "/admin/**", "/api/admin", "/api/admin/**").hasRole("ADMIN")
                         .anyRequest().authenticated())
                 .exceptionHandling(exceptions -> exceptions
                         .defaultAuthenticationEntryPointFor(

@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="_csrf" th:content="${_csrf.token}"><meta name="_csrf_header" th:content="${_csrf.headerName}">
+<title>Admin | StudyBuddy</title>
+<link rel="stylesheet" href="/css/main.css"><link rel="stylesheet" href="/css/admin.css">
+</head><body>
+<div th:replace="~{fragments/header :: header}"></div>
+<main class="container admin-page">
+<p class="eyebrow">StudyBuddy administration</p><h1>Admin dashboard</h1>
+<p>Manage courses, accounts and study group members.</p>
+<p><a href="/profile">Back to profile</a> · <a href="/">Return to website</a></p>
+<div id="admin-status" role="status" aria-live="polite" hidden></div>
+<nav class="admin-nav" aria-label="Admin sections"><a href="#courses">Courses <span th:text="${#lists.size(courses)}">0</span></a><a href="#users">Users <span th:text="${#lists.size(users)}">0</span></a><a href="#groups">Groups</a><a href="#activity">Activity</a></nav>
+<section id="courses" class="admin-panel"><h2>Courses</h2>
+<form data-course-create class="admin-form"><label>Course code<input name="courseCode" maxlength="20" required placeholder="COMP101"></label><label>Course name<input name="courseName" maxlength="100" required placeholder="Introduction to programming"></label><button>Add course</button></form>
+<p th:if="${#lists.isEmpty(courses)}">No courses yet.</p>
+<table th:unless="${#lists.isEmpty(courses)}"><thead><tr><th>Code</th><th>Course name</th><th>Actions</th></tr></thead><tbody><tr th:each="course : ${courses}"><td th:text="${course.courseCode}"></td><td th:text="${course.courseName}"></td><td class="actions"><button type="button" data-edit-course th:attr="data-id=${course.id},data-code=${course.courseCode},data-name=${course.courseName}">Edit</button><button type="button" class="danger" data-delete-course th:attr="data-id=${course.id},data-name=${course.courseCode}">Delete</button></td></tr></tbody></table>
+<p class="hint">Courses with linked records cannot be deleted. Codes used by study groups cannot be changed.</p></section>
+<section id="users" class="admin-panel"><h2>Users</h2>
+<label>Find a user<input type="search" id="user-search" placeholder="Name or email"></label>
+<table><thead><tr><th>Name</th><th>Email</th><th>Role</th><th>Status</th><th>Actions</th></tr></thead><tbody><tr th:each="user : ${users}" data-user-row><td th:text="${user.firstName + ' ' + user.lastName}"></td><td th:text="${user.email}"></td><td th:text="${user.role}"></td><td th:text="${user.enabled ? 'Active' : 'Disabled'}"></td><td class="actions"><span th:if="${user.role.name() == 'ADMIN'}">Protected</span><th:block th:unless="${user.role.name() == 'ADMIN'}"><button type="button" data-user-status th:attr="data-id=${user.id},data-enabled=${!user.enabled},data-name=${user.email}" th:text="${user.enabled ? 'Disable' : 'Restore'}"></button><button th:unless="${user.enabled}" type="button" class="danger" data-delete-user th:attr="data-id=${user.id},data-name=${user.email}">Delete permanently</button></th:block></td></tr></tbody></table>
+<p class="hint">Disable before deleting. Permanent deletion is only allowed when the account has no linked records. Administrator accounts are protected.</p></section>
+<section id="groups" class="admin-panel"><h2>Group members</h2>
+<p th:if="${#lists.isEmpty(groups)}">No groups yet. Create a study group from the Groups page to manage its members here.</p>
+<article class="group-card" th:each="group : ${groups}"><h3 th:text="${group.name}"></h3><p th:text="${group.course}"></p>
+<form data-add-member class="admin-form" th:attr="data-group=${group.id}"><label>Add an active user<select name="userId" required><option value="">Choose a user</option><option th:each="user : ${users}" th:if="${user.enabled}" th:value="${user.id}" th:text="${user.firstName + ' ' + user.lastName + ' — ' + user.email}"></option></select></label><button>Add member</button></form>
+<table><thead><tr><th>Member</th><th>Actions</th></tr></thead><tbody><tr th:each="member : ${members[group.id]}"><td th:text="${member.firstName + ' ' + member.lastName}"></td><td><span th:if="${member.creator}">Group creator · protected</span><div th:unless="${member.creator}" class="actions"><button type="button" data-remove-member th:attr="data-group=${group.id},data-user=${member.userId}">Remove</button><form data-move-member class="admin-form" th:attr="data-group=${group.id},data-user=${member.userId}"><select name="destinationGroupId" aria-label="Destination group" required><option value="">Move to…</option><option th:each="destination : ${groups}" th:if="${destination.id != group.id}" th:value="${destination.id}" th:text="${destination.name}"></option></select><button>Move</button></form></div></td></tr></tbody></table></article></section>
+<section id="activity" class="admin-panel"><h2>Recent admin activity</h2><p>Latest 50 successful changes. Times are shown in UTC.</p><p th:if="${#lists.isEmpty(audits)}">No admin changes yet.</p><table th:unless="${#lists.isEmpty(audits)}"><thead><tr><th>Time</th><th>Administrator</th><th>Action</th><th>Object</th></tr></thead><tbody><tr th:each="audit : ${audits}"><td th:text="${audit.occurredAt}"></td><td th:text="${audit.actor}"></td><td th:text="${audit.action}"></td><td th:text="${audit.target}"></td></tr></tbody></table></section>
+<dialog id="course-dialog"><form data-course-edit><h2>Edit course</h2><input name="id" type="hidden"><label>Course code<input name="courseCode" maxlength="20" required></label><label>Course name<input name="courseName" maxlength="100" required></label><p data-dialog-status role="alert"></p><div class="actions"><button type="button" data-close-dialog>Cancel</button><button>Save changes</button></div></form></dialog>
+</main><div th:replace="~{fragments/footer :: footer}"></div><script src="/js/main.js"></script><script src="/js/admin.js"></script></body></html>

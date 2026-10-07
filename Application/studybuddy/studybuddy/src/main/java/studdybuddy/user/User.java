@@ -65,6 +65,12 @@ public class User {
         updatedAt = Instant.now();
     }
 
+    @Column(nullable = false)
+    private boolean enabled = true;
+
+    public boolean isEnabled() { return enabled; }
+    public void setEnabled(boolean enabled) { this.enabled = enabled; }
+
     public Long getId() { return id; }
     public String getFirstName() { return firstName; }
     public String getLastName() { return lastName; }
