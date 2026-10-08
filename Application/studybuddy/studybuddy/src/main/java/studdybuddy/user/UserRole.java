@@ -1,5 +1,6 @@
 package studdybuddy.user;
 
 public enum UserRole {
-    STUDENT
+    STUDENT,
+    ADMIN
 }
