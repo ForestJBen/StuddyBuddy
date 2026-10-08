@@ -9,4 +9,7 @@ public interface UserRepository extends JpaRepository<User, Long> {
     @org.springframework.data.jpa.repository.Lock(jakarta.persistence.LockModeType.PESSIMISTIC_WRITE)
     @org.springframework.data.jpa.repository.Query("select x from User x where x.id = :id")
     java.util.Optional<User> findLockedById(@org.springframework.data.repository.query.Param("id") Long id);
+    long countByEnabled(boolean enabled);
+
+    long countByRole(UserRole role);
 }
